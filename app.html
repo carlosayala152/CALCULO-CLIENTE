@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>SISTEMA DE CORTE PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* ===== ENVOLTORIO DO SISTEMA ===== */
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#f0f2f5;
+  color:#1e293b;
+}
+
+/* ===== BARRA SUPERIOR ===== */
+.topbar{
+  background:#020617;
+  color:white;
+  padding:14px;
+  text-align:center;
+  font-weight:bold;
+  border-bottom:4px solid #10b981;
+}
+.topbar span{
+  display:block;
+  font-size:12px;
+  color:#94a3b8;
+}
+
+/* ===== BOTÃO SAIR ===== */
+.btn-sair{
+  position:fixed;
+  bottom:15px;
+  right:15px;
+  padding:10px 16px;
+  background:#dc2626;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+  z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 PROTEÇÃO DE LICENÇA -->
+<script>
+if(!localStorage.getItem("LICENCA")){
+  window.location.href = "index.html";
+}
+</script>
+
+<!-- 🔰 BARRA SUPERIOR -->
+<div class="topbar">
+  SISTEMA DE CORTE PRO — by Carlos-Daniel / DANI
+  <span id="infoLic"></span>
+</div>
+
+<script>
+const lic = JSON.parse(localStorage.getItem("LICENCA") || "{}");
+document.getElementById("infoLic").innerText =
+  `Cliente: ${lic.cliente || ""} | Plano: ${lic.plano || ""} | Validade: ${lic.validade || ""}`;
+</script>
+
+<!-- ===============================
+     INÍCIO DO v82 REAL (INTACTO)
+     =============================== -->
+
+<style>
+body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; color: #1e293b; }
+.box { background: white; padding: 30px; border-radius: 15px; max-width: 1100px; margin: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+.header { background: #0f172a; color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
+.header input, .header select { padding: 8px; margin: 0 5px; text-align: center; border-radius: 5px; border: none; font-weight: bold; font-size: 14px; }
+.header input { width: 75px; }
+.no-print { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #dee2e6; padding: 12px; text-align: center; font-weight: bold; }
+th { background: #334155; color: white; font-size: 11px; text-transform: uppercase; }
+.btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+.btn-calc { background: #10b981; color: white; width: 100%; font-size: 18px; margin: 20px 0; }
+.btn-print { background: #3b82f6; color: white; width: 100%; font-size: 18px; }
+.btn-grade { background: #64748b; color: white; font-size: 11px; }
+.sessao-titulo { background: #0f172a; color: white; padding: 15px; margin-top: 40px; border-radius: 8px; font-weight: 800; border-left: 15px solid #10b981; }
+.card { border: 2px solid #0f172a; padding: 20px; margin-top: 20px; border-radius: 10px; background: #fff; page-break-inside: avoid; }
+.card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 15px; }
+.input-edit { width: 60px; padding: 6px; text-align: center; font-weight: bold; border: 2px solid #3b82f6; border-radius: 4px; }
+.input-folha { background: #f0fdf4; border-color: #22c55e; width: 80px; font-size: 18px; }
+.input-molde { background: #f0f9ff; }
+.sobra { color: #059669; } 
+.falta { color: #dc2626; }
+@media print {
+  .no-print, .btn-calc, .btn-print, td button, .header input, .header select { display: none !important; }
+  body { background: white; padding: 0; }
+  .box { box-shadow: none; max-width: 100%; }
+}
+</style>
+
+<div class="box">
+  <div class="header">
+    <h1>SISTEMA DE CORTE v82.0</h1>
+    L: <input type="number" id="L" value="1.56" step="0.01">
+    ÁREA:
+    <select id="A" onchange="recalcularTodosOsCards()">
+      <option value="0.50">Pequenas (0.50m)</option>
+      <option value="0.90" selected>Médias (0.90m)</option>
+      <option value="1.30">Grandes (1.30m)</option>
+      <option value="1.60">Extra G (1.60m)</option>
+    </select>
+    Mesa: <input type="number" id="M" value="7.00">
+  </div>
+
+  <div class="no-print">
+    <button class="btn btn-grade" onclick="setGrade([['38',20],['40',20],['42',20],['44',40],['46',30],['48',30],['50',30],['52',20],['54',20],['56',20],['58',20]])">GRADE 38-58</button>
+    <button class="btn btn-grade" onclick="setGrade([['P',60],['M',160],['G',160],['GG',110]])">GRADE LETRAS</button>
+    <button class="btn btn-grade" onclick="addLinha('',0)">+ TAMANHO</button>
+  </div>
+
+  <table class="no-print">
+    <thead><tr><th>TAM</th><th>QTD</th><th>X</th></tr></thead>
+    <tbody id="corpoEntrada"></tbody>
+  </table>
+
+  <button class="btn btn-calc" onclick="gerarTudo()">⚡ GERAR ENFESTOS</button>
+  <button class="btn btn-print" onclick="window.print()">🖨️ IMPRIMIR</button>
+
+  <div id="display"></div>
+</div>
+
+<script>
+/* ===== SCRIPT ORIGINAL v82 (INTACTO) ===== */
