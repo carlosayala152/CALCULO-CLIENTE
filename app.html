@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ===== ENVOLTORIO DO SISTEMA ===== */
+/* ===== ENVOLTÓRIO DO APP ===== */
 body{
   margin:0;
   font-family:'Segoe UI',Arial,sans-serif;
@@ -14,11 +14,11 @@ body{
   color:#1e293b;
 }
 
-/* ===== BARRA SUPERIOR ===== */
+/* ===== TOPO LICENÇA ===== */
 .topbar{
   background:#020617;
   color:white;
-  padding:14px;
+  padding:12px;
   text-align:center;
   font-weight:bold;
   border-bottom:4px solid #10b981;
@@ -32,9 +32,9 @@ body{
 /* ===== BOTÃO SAIR ===== */
 .btn-sair{
   position:fixed;
-  bottom:15px;
-  right:15px;
-  padding:10px 16px;
+  top:10px;
+  right:10px;
+  padding:8px 14px;
   background:#dc2626;
   color:white;
   border:none;
@@ -48,27 +48,37 @@ body{
 
 <body>
 
-<!-- 🔐 PROTEÇÃO DE LICENÇA -->
+<!-- 🔐 PROTEÇÃO DE LOGIN -->
 <script>
-if(!localStorage.getItem("LICENCA")){
+if(!localStorage.getItem("cliente")){
   window.location.href = "index.html";
 }
 </script>
 
-<!-- 🔰 BARRA SUPERIOR -->
+<!-- 🔰 TOPO -->
 <div class="topbar">
   SISTEMA DE CORTE PRO — by Carlos-Daniel / DANI
-  <span id="infoLic"></span>
+  <span id="licInfo"></span>
 </div>
 
 <script>
-const lic = JSON.parse(localStorage.getItem("LICENCA") || "{}");
-document.getElementById("infoLic").innerText =
-  `Cliente: ${lic.cliente || ""} | Plano: ${lic.plano || ""} | Validade: ${lic.validade || ""}`;
+document.getElementById("licInfo").innerText =
+  "Cliente: " + localStorage.getItem("cliente") +
+  " | Plano: " + localStorage.getItem("plano") +
+  " | Validade: " + localStorage.getItem("validade");
+</script>
+
+<button class="btn-sair" onclick="logout()">SAIR</button>
+
+<script>
+function logout(){
+  localStorage.clear();
+  window.location.href = "index.html";
+}
 </script>
 
 <!-- ===============================
-     INÍCIO DO v82 REAL (INTACTO)
+     INÍCIO DO v82 ORIGINAL (INTACTO)
      =============================== -->
 
 <style>
@@ -77,22 +87,28 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; 
 .header { background: #0f172a; color: white; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 25px; }
 .header input, .header select { padding: 8px; margin: 0 5px; text-align: center; border-radius: 5px; border: none; font-weight: bold; font-size: 14px; }
 .header input { width: 75px; }
+
 .no-print { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 th, td { border: 1px solid #dee2e6; padding: 12px; text-align: center; font-weight: bold; }
 th { background: #334155; color: white; font-size: 11px; text-transform: uppercase; }
+
 .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
 .btn-calc { background: #10b981; color: white; width: 100%; font-size: 18px; margin: 20px 0; }
 .btn-print { background: #3b82f6; color: white; width: 100%; font-size: 18px; }
 .btn-grade { background: #64748b; color: white; font-size: 11px; }
+
 .sessao-titulo { background: #0f172a; color: white; padding: 15px; margin-top: 40px; border-radius: 8px; font-weight: 800; border-left: 15px solid #10b981; }
 .card { border: 2px solid #0f172a; padding: 20px; margin-top: 20px; border-radius: 10px; background: #fff; page-break-inside: avoid; }
 .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 15px; }
+
 .input-edit { width: 60px; padding: 6px; text-align: center; font-weight: bold; border: 2px solid #3b82f6; border-radius: 4px; }
 .input-folha { background: #f0fdf4; border-color: #22c55e; width: 80px; font-size: 18px; }
 .input-molde { background: #f0f9ff; }
+
 .sobra { color: #059669; } 
 .falta { color: #dc2626; }
+
 @media print {
   .no-print, .btn-calc, .btn-print, td button, .header input, .header select { display: none !important; }
   body { background: white; padding: 0; }
@@ -132,4 +148,6 @@ th { background: #334155; color: white; font-size: 11px; text-transform: upperca
 </div>
 
 <script>
-/* ===== SCRIPT ORIGINAL v82 (INTACTO) ===== */
+/* ===== SCRIPT v82 ORIGINAL — INTACTO ===== */
+
+
