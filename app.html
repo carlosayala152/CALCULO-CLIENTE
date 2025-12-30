@@ -6,27 +6,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;margin:0}
-.topbar{background:#020617;color:#fff;padding:12px;text-align:center;font-weight:bold}
-.topbar span{display:block;font-size:12px;color:#94a3b8}
-.btn-sair{position:fixed;top:10px;right:10px;background:#dc2626;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:bold;cursor:pointer;z-index:999}
-.box{background:#fff;padding:15px;border-radius:15px;max-width:1100px;margin:70px auto 20px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
-.header{background:#0f172a;color:#fff;padding:15px;border-radius:10px;text-align:center;margin-bottom:15px}
-.header-inputs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-input,select{padding:10px;border-radius:8px;border:1px solid #cbd5e1;font-size:15px;width:100%}
-.no-print{display:flex;flex-direction:column;gap:10px}
-.btn{padding:12px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
-.btn-calc{background:#10b981;color:#fff}
-.btn-print{background:#3b82f6;color:#fff}
-.btn-grade{background:#64748b;color:#fff;font-size:11px}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #dee2e6;padding:8px;text-align:center;font-weight:bold}
-th{background:#334155;color:#fff;font-size:10px}
-.sessao-titulo{background:#0f172a;color:#fff;padding:10px;margin-top:25px;border-left:8px solid #10b981;font-weight:800}
-.card{border:2px solid #0f172a;padding:10px;margin-top:15px;border-radius:10px}
-.card-header{display:flex;justify-content:space-between;border-bottom:2px solid #0f172a;padding-bottom:5px}
-.input-edit{width:55px;padding:5px;font-weight:bold}
-.input-folha{background:#dcfce7;font-size:18px}
+/* ===== SEGURANÇA / TOPO ===== */
+body{
+  margin:0;
+  font-family:'Segoe UI',Arial,sans-serif;
+  background:#f0f2f5;
+  color:#1e293b;
+}
+.topo{
+  background:#020617;
+  color:#fff;
+  padding:12px;
+  text-align:center;
+  font-weight:bold;
+  border-bottom:4px solid #10b981;
+}
+.topo small{
+  display:block;
+  font-size:12px;
+  color:#94a3b8;
+}
+.sair{
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  z-index:999;
+}
+
+/* ===== v82 ===== */
+.box{
+  background:#fff;
+  padding:15px;
+  border-radius:15px;
+  max-width:1100px;
+  margin:70px auto 30px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+.header{
+  background:#0f172a;
+  color:#fff;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+  margin-bottom:15px;
+}
+.header-inputs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+input,select{
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  font-size:15px;
+  width:100%;
+}
+.no-print{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.btn{
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.btn-grade{
+  background:#64748b;
+  color:#fff;
+  font-size:11px;
+}
+.btn-calc{
+  background:#10b981;
+  color:#fff;
+}
+.btn-print{
+  background:#3b82f6;
+  color:#fff;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+th,td{
+  border:1px solid #dee2e6;
+  padding:8px;
+  text-align:center;
+  font-weight:bold;
+}
+th{
+  background:#334155;
+  color:#fff;
+  font-size:10px;
+}
+.sessao{
+  background:#0f172a;
+  color:#fff;
+  padding:10px;
+  margin-top:25px;
+  border-left:8px solid #10b981;
+  font-weight:800;
+}
+.card{
+  border:2px solid #0f172a;
+  padding:10px;
+  margin-top:15px;
+  border-radius:10px;
+}
+.card-header{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:2px solid #0f172a;
+  padding-bottom:5px;
+}
+.input-edit{
+  width:55px;
+  padding:5px;
+  font-weight:bold;
+}
+.input-folha{
+  background:#dcfce7;
+  font-size:18px;
+}
 .sobra{color:#059669}
 .falta{color:#dc2626}
 </style>
@@ -34,18 +145,34 @@ th{background:#334155;color:#fff;font-size:10px}
 
 <body>
 
+<!-- 🔐 BLOQUEIO -->
 <script>
-if(!localStorage.getItem("cliente")) location.href="index.html";
+if(localStorage.getItem("LICENCA_OK")!=="1"){
+  location.href="index.html";
+}
 </script>
 
-<div class="topbar">
-SISTEMA DE CORTE PRO
-<span id="lic"></span>
+<div class="topo">
+  SISTEMA DE CORTE PRO
+  <small id="info"></small>
 </div>
 
-<button class="btn-sair" onclick="localStorage.clear();location.href='index.html'">SAIR</button>
+<button class="sair" onclick="logout()">SAIR</button>
+
+<script>
+document.getElementById("info").innerText =
+  `Cliente: ${localStorage.getItem("CLIENTE")} | Plano: ${localStorage.getItem("PLANO")} | Validade: ${localStorage.getItem("VALIDADE")}`;
+
+function logout(){
+  localStorage.clear();
+  location.href="index.html";
+}
+</script>
+
+<!-- ================== v82 ================== -->
 
 <div class="box">
+
 <div class="header">
 <h1>SISTEMA DE CORTE v82</h1>
 <div class="header-inputs">
@@ -65,84 +192,92 @@ SISTEMA DE CORTE PRO
 
 <div class="no-print">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
-<button class="btn btn-grade" onclick="setGrade([['38',20],['40',20],['42',20],['44',40]])">Grade 38-44</button>
-<button class="btn btn-grade" onclick="setGrade([['P',60],['M',160],['G',160],['GG',110]])">Grade P-GG</button>
+<button class="btn btn-grade" onclick="setGrade([[38,20],[40,20],[42,20],[44,40],[46,30],[48,30],[50,30]])">GRADE 38–50</button>
+<button class="btn btn-grade" onclick="setGrade([['P',60],['M',160],['G',160],['GG',110]])">GRADE LETRAS</button>
 </div>
+
 <button class="btn btn-grade" onclick="addLinha('',0)">+ TAMANHO</button>
 
 <table>
 <thead><tr><th>TAM</th><th>QTD</th><th>X</th></tr></thead>
-<tbody id="corpoEntrada"></tbody>
+<tbody id="entrada"></tbody>
 </table>
 </div>
 
 <button class="btn btn-calc" onclick="gerarTudo()">⚡ GERAR ENFESTOS</button>
-<button class="btn btn-print" onclick="window.print()">🖨️ IMPRIMIR</button>
+<button class="btn btn-print" onclick="window.print()">🖨 IMPRIMIR</button>
 
-<div id="display"></div>
+<div id="saida"></div>
 </div>
 
 <script>
-document.getElementById("lic").innerText =
-"Cliente: "+localStorage.getItem("cliente")+" | Plano: "+localStorage.getItem("plano")+" | Validade: "+localStorage.getItem("validade");
-
 function addLinha(t,q){
-let r=corpoEntrada.insertRow();
-r.innerHTML=`<td><input value="${t}" class="in-t"></td>
-<td><input type="number" value="${q}" class="in-q"></td>
-<td><button onclick="this.parentElement.parentElement.remove()">X</button></td>`;
+  let r=entrada.insertRow();
+  r.innerHTML=`<td><input value="${t}" class="t"></td>
+               <td><input type="number" value="${q}" class="q"></td>
+               <td><button onclick="this.parentElement.parentElement.remove()">X</button></td>`;
 }
 
-function setGrade(l){corpoEntrada.innerHTML="";l.forEach(i=>addLinha(i[0],i[1]));}
+function setGrade(g){
+  entrada.innerHTML="";
+  g.forEach(i=>addLinha(i[0],i[1]));
+}
 
 function recalcularTodosOsCards(){
-document.querySelectorAll('.input-folha').forEach(f=>f.dispatchEvent(new Event('input')));
+  document.querySelectorAll(".input-folha").forEach(f=>f.dispatchEvent(new Event("input")));
 }
 
 function gerarTudo(){
-display.innerHTML="";
-let peds=[];
-[...corpoEntrada.rows].forEach(r=>{
-let t=r.querySelector('.in-t').value;
-let q=parseInt(r.querySelector('.in-q').value)||0;
-if(q>0)peds.push({t,q});
-});
-if(!peds.length)return;
+  saida.innerHTML="";
+  let peds=[];
+  [...entrada.rows].forEach(r=>{
+    let t=r.querySelector(".t").value;
+    let q=parseInt(r.querySelector(".q").value)||0;
+    if(q>0)peds.push({t,q});
+  });
+  if(!peds.length)return;
 
-display.innerHTML+=`<div class="sessao-titulo">Opção 1 — Geral</div>`;
-renderCard(peds,Math.min(...peds.map(p=>p.q)));
+  saida.innerHTML+=`<div class="sessao">ENFESTO PRINCIPAL</div>`;
+  renderCard(peds,Math.min(...peds.map(p=>p.q)));
 }
 
 function renderCard(itens,fol){
-let c=document.createElement("div");
-c.className="card";
-let html=`<div class="card-header"><b>ENFESTO</b>
-<div>FOLHAS <input type="number" value="${fol}" class="input-edit input-folha"></div></div>
-<table><thead><tr><th>TAM</th><th>PED</th><th>MLD</th><th>TOT</th><th>SAL</th></tr></thead><tbody>`;
-itens.forEach(i=>{
-let m=Math.round(i.q/fol)||1;
-html+=`<tr><td>${i.t}</td><td>${i.q}</td>
+  let c=document.createElement("div");
+  c.className="card";
+  let html=`<div class="card-header">
+<b>ENFESTO</b>
+<div>FOLHAS <input type="number" value="${fol}" class="input-edit input-folha"></div>
+</div>
+<table>
+<tr><th>TAM</th><th>PED</th><th>MLD</th><th>TOT</th><th>SAL</th></tr>`;
+  itens.forEach(i=>{
+    let m=Math.round(i.q/fol)||1;
+    html+=`<tr>
+<td>${i.t}</td>
+<td>${i.q}</td>
 <td><input class="input-edit molde" value="${m}"></td>
-<td class="tot"></td><td class="sal"></td></tr>`;
-});
-html+=`</tbody></table>`;
-c.innerHTML=html;
-display.appendChild(c);
+<td class="tot"></td>
+<td class="sal"></td>
+</tr>`;
+  });
+  html+=`</table>`;
+  c.innerHTML=html;
+  saida.appendChild(c);
 
-const calc=()=>{
-let f=parseInt(c.querySelector('.input-folha').value)||0;
-c.querySelectorAll('tbody tr').forEach(r=>{
-let ped=parseInt(r.children[1].innerText);
-let m=parseInt(r.querySelector('.molde').value)||0;
-let tot=f*m;
-r.querySelector('.tot').innerText=tot;
-let sal=tot-ped;
-r.querySelector('.sal').innerText=(sal>=0?'+':'')+sal;
-r.querySelector('.sal').className=sal>=0?'sobra':'falta';
-});
-};
-c.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));
-calc();
+  const calc=()=>{
+    let f=parseInt(c.querySelector(".input-folha").value)||0;
+    c.querySelectorAll("tbody tr").forEach(r=>{
+      let ped=parseInt(r.children[1].innerText);
+      let m=parseInt(r.querySelector(".molde").value)||0;
+      let tot=f*m;
+      r.querySelector(".tot").innerText=tot;
+      let s=tot-ped;
+      r.querySelector(".sal").innerText=(s>=0?"+":"")+s;
+      r.querySelector(".sal").className=s>=0?"sobra":"falta";
+    });
+  };
+  c.querySelectorAll("input").forEach(i=>i.addEventListener("input",calc));
+  calc();
 }
 
 setGrade([['P',60],['M',160],['G',160],['GG',110]]);
