@@ -8,255 +8,193 @@
 <style>
 body{
   margin:0;
-  font-family:Segoe UI,Arial,sans-serif;
-  background:#0f172a;
+  font-family:Segoe UI,Arial;
+  background:linear-gradient(135deg,#020617,#020617,#020617);
   color:#fff;
 }
-.topo{
-  background:#020617;
-  padding:14px;
+.top{
   text-align:center;
-  font-size:20px;
+  padding:20px;
   font-weight:bold;
+  font-size:20px;
 }
-.topo small{
-  display:block;
+.sub{
   font-size:13px;
-  color:#94a3b8;
+  opacity:.7;
 }
-.container{
-  max-width:1100px;
-  margin:auto;
+.box{
+  max-width:900px;
+  margin:20px auto;
+  background:#020617cc;
+  border-radius:16px;
   padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
 }
-.card{
-  background:#020617;
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:20px;
+h3{
+  margin-top:0;
 }
 input,select,button{
   width:100%;
   padding:10px;
-  margin-top:8px;
-  border-radius:8px;
+  border-radius:10px;
   border:none;
+  margin-bottom:10px;
   font-size:15px;
 }
-button.primary{
+button.save{
   background:#10b981;
   color:#fff;
   font-weight:bold;
   cursor:pointer;
 }
-button.secondary{
+button.cancel{
   background:#64748b;
   color:#fff;
+  cursor:pointer;
 }
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:15px;
+  margin-top:10px;
 }
 th,td{
-  padding:10px;
-  border:1px solid #1e293b;
+  border-bottom:1px solid #334155;
+  padding:8px;
   text-align:center;
+  font-size:14px;
 }
 th{
-  background:#0f172a;
+  opacity:.8;
 }
-.badge-on{color:#22c55e;font-weight:bold}
-.badge-off{color:#ef4444;font-weight:bold}
-.actions button{margin:2px;padding:6px 8px;font-size:13px}
-.msg{color:#f87171;margin-top:10px;font-size:14px}
-.hidden{display:none}
+.footer{
+  text-align:center;
+  font-size:12px;
+  opacity:.6;
+  margin-top:20px;
+}
 </style>
 </head>
 
 <body>
 
-<div class="topo">
-  SISTEMA DE CORTE PRO
-  <small>Admin • by Carlos Daniel / DANI</small>
+<div class="top">
+  SISTEMA DE CORTE PRO<br>
+  <span class="sub">Admin · by Carlos Daniel / DANI</span>
 </div>
 
-<div class="container">
+<div class="box">
+  <h3>Criar Cliente</h3>
 
-  <!-- LOGIN -->
-  <div class="card" id="loginBox">
-    <h3>Login Admin</h3>
-    <input type="password" id="adminPass" placeholder="Senha admin">
-    <button class="primary" onclick="login()">Entrar</button>
-    <div id="loginMsg" class="msg"></div>
-  </div>
+  <select id="status">
+    <option value="ON">ON</option>
+    <option value="OFF">OFF</option>
+  </select>
 
-  <!-- PAINEL -->
-  <div class="hidden" id="panel">
+  <input id="senha" placeholder="Senha do cliente">
 
-    <!-- FORMULÁRIO -->
-    <div class="card">
-      <h3 id="formTitle">Criar Cliente</h3>
+  <input id="validade" type="date">
 
-      <select id="status">
-        <option value="ON">ON</option>
-        <option value="OFF">OFF</option>
-      </select>
+  <input id="cliente" placeholder="Nome do cliente">
 
-      <input id="senha" placeholder="Senha do cliente">
+  <select id="plano">
+    <option value="MENSAL">MENSAL</option>
+    <option value="ANUAL">ANUAL</option>
+    <option value="VITALICIO">VITALÍCIO</option>
+  </select>
 
-      <input id="validade" type="date">
+  <button class="save" onclick="criarCliente()">Salvar</button>
+  <button class="cancel" onclick="limpar()">Cancelar</button>
+</div>
 
-      <input id="cliente" placeholder="Nome do cliente">
+<div class="box">
+  <h3>Clientes</h3>
 
-      <select id="plano">
-        <option>MENSAL</option>
-        <option>TRIMESTRAL</option>
-        <option>ANUAL</option>
-      </select>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Cliente</th>
+        <th>Senha</th>
+        <th>Validade</th>
+        <th>Plano</th>
+      </tr>
+    </thead>
+    <tbody id="lista">
+      <tr><td colspan="5">Carregando...</td></tr>
+    </tbody>
+  </table>
+</div>
 
-      <input type="hidden" id="linha">
-
-      <button class="primary" onclick="salvar()">Salvar</button>
-      <button class="secondary" onclick="limpar()">Cancelar</button>
-
-      <div id="formMsg" class="msg"></div>
-    </div>
-
-    <!-- TABELA DE CLIENTES -->
-    <div class="card">
-      <h3>Clientes</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Status</th><th>Cliente</th><th>Senha</th><th>Validade</th><th>Plano</th><th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="lista">
-          <tr><td colspan="6">Carregando...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
+<div class="footer">
+  by Carlos Daniel / DANI
 </div>
 
 <script>
-// CONFIG
-const ADMIN_PASS = "Amor2403";
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQcWaSSrpbMC5FYpUnSLKdSQ1lMC-hlZtwt5I_9ko1OonFTDpjwofx-si2ujC8sDDGmw/exec";
+const API = "https://script.google.com/macros/s/AKfycbzP1WYuEkNrGOpwtLQy8mdG9kcVO1Ue9WWjpITwBnp-suCrFZ2VpGwBmUQRXIu-Pcaa8Q/exec";
 
-// LOGIN
-function login(){
-  if(adminPass.value !== ADMIN_PASS){
-    loginMsg.innerText = "Senha incorreta";
-    return;
-  }
-  loginBox.classList.add("hidden");
-  panel.classList.remove("hidden");
-  carregarLista();
-}
+async function carregarClientes(){
+  try{
+    const r = await fetch(API + "?acao=listar");
+    const dados = await r.json();
 
-// CHAMA O SCRIPT
-async function chamar(params){
-  const url = SCRIPT_URL + "?" + new URLSearchParams(params).toString();
-  const res = await fetch(url);
-  return res.json();
-}
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
 
-// LISTAR CLIENTES
-async function carregarLista(){
-  const dados = await chamar({acao:"listar"});
-  const tbody = document.getElementById("lista");
-  tbody.innerHTML = "";
-
-  if(!Array.isArray(dados) || dados.length === 0){
-    tbody.innerHTML = "<tr><td colspan='6'>Nenhum cliente</td></tr>";
-    return;
-  }
-
-  dados.forEach((c,i) => {
-    tbody.innerHTML += `
-      <tr>
-        <td class="${c.status==="ON"?"badge-on":"badge-off"}">${c.status}</td>
+    dados.forEach(c=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${c.status}</td>
         <td>${c.cliente}</td>
         <td>${c.senha}</td>
         <td>${c.validade}</td>
         <td>${c.plano}</td>
-        <td class="actions">
-          <button onclick="editar(${i})">Editar</button>
-          <button onclick="alternar(${i})">${c.status==="ON"?"OFF":"ON"}</button>
-        </td>
-      </tr>`;
-  });
+      `;
+      lista.appendChild(tr);
+    });
+
+  }catch(e){
+    document.getElementById("lista").innerHTML =
+      "<tr><td colspan='5'>Erro ao carregar</td></tr>";
+  }
 }
 
-// LIMPAR FORMULÁRIO
-function limpar(){
-  status.value="ON";
-  senha.value="";
-  validade.value="";
-  cliente.value="";
-  plano.value="MENSAL";
-  linha.value="";
-  formTitle.innerText="Criar Cliente";
-  formMsg.innerText="";
-}
+async function criarCliente(){
+  const status = statusEl().value;
+  const senha = senhaEl().value;
+  const validade = validadeEl().value;
+  const cliente = clienteEl().value;
+  const plano = planoEl().value;
 
-// SALVAR (CRIAR / EDITAR)
-async function salvar(){
-  if(!senha.value || !validade.value || !cliente.value){
-    formMsg.innerText = "Preencha todos os campos";
+  if(!senha || !validade || !cliente){
+    alert("Preencha todos os campos");
     return;
   }
 
-  const params = {
-    acao:"salvar",
-    status: status.value,
-    senha: senha.value,
-    validade: validade.value,
-    cliente: cliente.value,
-    plano: plano.value
-  };
+  const url = `${API}?acao=criar&status=${status}&senha=${senha}&validade=${validade}&cliente=${cliente}&plano=${plano}`;
+  const r = await fetch(url);
+  const j = await r.json();
 
-  if(linha.value){
-    params.linha = linha.value;
-    params.acao = "atualizar";
+  if(j.ok){
+    alert("Cliente criado com sucesso");
+    limpar();
+    carregarClientes();
+  }else{
+    alert(j.erro || "Erro");
   }
-
-  await chamar(params);
-  limpar();
-  carregarLista();
 }
 
-// EDITAR
-async function editar(i){
-  const dados = await chamar({acao:"listar"});
-  const item = dados[i];
-
-  status.value = item.status;
-  senha.value   = item.senha;
-  validade.value= item.validade;
-  cliente.value = item.cliente;
-  plano.value   = item.plano;
-  linha.value   = i;
-  formTitle.innerText = "Editar Cliente";
+function limpar(){
+  senhaEl().value="";
+  clienteEl().value="";
 }
 
-// ALTERNAR ON/OFF
-async function alternar(i){
-  const dados = await chamar({acao:"listar"});
-  const atual = dados[i];
-  await chamar({
-    acao:"salvar",
-    status: atual.status==="ON"?"OFF":"ON",
-    senha: atual.senha,
-    validade: atual.validade,
-    cliente: atual.cliente,
-    plano: atual.plano
-  });
-  carregarLista();
-}
+const statusEl=()=>document.getElementById("status");
+const senhaEl=()=>document.getElementById("senha");
+const validadeEl=()=>document.getElementById("validade");
+const clienteEl=()=>document.getElementById("cliente");
+const planoEl=()=>document.getElementById("plano");
+
+window.onload = carregarClientes;
 </script>
 
 </body>
