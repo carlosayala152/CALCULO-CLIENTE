@@ -2,33 +2,42 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CALCULO DE CORTE</title>
+<title>SISTEMA DE CORTE PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 body{
   margin:0;
-  font-family:Segoe UI,Arial;
-  background:#0f172a;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:linear-gradient(135deg,#020617,#0f172a);
   color:#fff;
-  display:flex;
-  justify-content:center;
-  align-items:center;
   height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 .box{
   background:#020617;
   padding:30px;
-  border-radius:14px;
+  border-radius:16px;
   width:100%;
-  max-width:360px;
+  max-width:380px;
   text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.5);
+}
+h2{margin-bottom:6px}
+.brand{
+  font-size:13px;
+  color:#9ca3af;
+  margin-bottom:20px;
 }
 input,button{
   width:100%;
   padding:12px;
-  margin-top:12px;
+  margin-top:10px;
   border-radius:8px;
   border:none;
+  font-size:15px;
 }
 button{
   background:#10b981;
@@ -36,32 +45,40 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-#msg{color:#f87171;margin-top:10px}
+.msg{
+  margin-top:12px;
+  color:#f87171;
+  font-size:14px;
+}
 </style>
 </head>
+
 <body>
 
 <div class="box">
-  <h2>SISTEMA DE CÁLCULO DE CORTE</h2>
-  <small>Digite sua senha</small>
+  <h2>SISTEMA DE CORTE PRO</h2>
+  <div class="brand">by Carlos Daniel / DANI</div>
 
-  <input id="senha" placeholder="Senha">
+  <input id="senha" placeholder="Digite sua senha">
   <button onclick="entrar()">ENTRAR</button>
-  <div id="msg"></div>
+
+  <div class="msg" id="msg"></div>
 </div>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTuSmsymsS19AqaRjVWOlcRA2FfU4yanFPiTFIvp4_VPyxm3vFF0i0ocZAY7hoe1XzfwP0wslP2dKWR/pub?output=csv";
+const CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTuSmsymsS19AqaRjVWOlcRA2FfU4yanFPiTFIvp4_VPyxm3vFF0i0ocZAY7hoe1XzfwP0wslP2dKWR/pub?output=csv";
 
 function hoje(){
   return new Date().toISOString().split("T")[0];
 }
 
 async function entrar(){
-  msg.innerText="Verificando...";
+  msg.innerText = "Verificando licença...";
   try{
     const r = await fetch(CSV_URL + "&_=" + Date.now());
     const t = await r.text();
+
     const linhas = t
       .split("\n")
       .map(l => l.replace(/\r/g,""))
@@ -71,29 +88,40 @@ async function entrar(){
     const senhaDigitada = senha.value.trim();
 
     for(const l of dados){
-      const [status,pass,validade,pc,cliente,plano] = l;
+      const status   = l[0];
+      const pass     = l[1];
+      const validade = l[2];
+      const cliente  = l[4];
+      const plano    = l[5];
+
       if(pass === senhaDigitada){
         if(status !== "ON"){
-          msg.innerText="Sistema bloqueado";
+          msg.innerText = "Licença bloqueada. Contate o suporte.";
           return;
         }
         if(validade < hoje()){
-          msg.innerText="Licença vencida";
+          msg.innerText = "Licença vencida. Contate o suporte.";
           return;
         }
+
+        // salva sessão
         localStorage.setItem("LIC_OK","1");
         localStorage.setItem("CLIENTE",cliente);
         localStorage.setItem("PLANO",plano);
         localStorage.setItem("VALIDADE",validade);
-        location.href="app.html";
+
+        location.href = "app.html";
         return;
       }
     }
-    msg.innerText="Senha inválida";
-  }catch{
-    msg.innerText="Erro de conexão";
+
+    msg.innerText = "Senha inválida";
+
+  }catch(e){
+    msg.innerText = "Erro de conexão";
   }
 }
 </script>
+
 </body>
 </html>
