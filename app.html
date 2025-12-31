@@ -153,30 +153,49 @@ th{background:#0f172a;color:#fff}
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTuSmsymsS19AqaRjVWOlcRA2FfU4yanFPiTFIvp4_VPyxm3vFF0i0ocZAY7hoe1XzfwP0wslP2dKWR/pub?output=csv";
 
 // ================= LOGIN =================
+<script>
 async function login(){
   const senha = senhaInput.value.trim();
-  const r = await fetch(CSV_URL);
-  const t = await r.text();
-  const linhas = t.split("\n").map(l=>l.split(","));
+  loginMsg.innerText = "";
 
-  const lic = linhas.find(l=>l[1]===senha);
+  try{
+    const r = await fetch(CSV_URL + "&_=" + Date.now());
+    const t = await r.text();
 
-  if(!lic || lic[0]!=="ON"){
-    loginMsg.innerText="Senha inválida ou bloqueada";
-    return;
+    const linhas = t
+      .split("\n")
+      .map(l => l.replace(/\r/g,""))
+      .map(l => l.split(",").map(c => c.replace(/"/g,"").trim()));
+
+    // remove cabeçalho
+    const dados = linhas.slice(1);
+
+    const lic = dados.find(l => l[1] === senha);
+
+    if(!lic){
+      loginMsg.innerText = "Senha inválida";
+      return;
+    }
+
+    if(lic[0] !== "ON"){
+      loginMsg.innerText = "Licença bloqueada";
+      return;
+    }
+
+    cliente.innerText = lic[4] || "-";
+    plano.innerText   = lic[5] || "-";
+    validade.innerText= lic[2] || "-";
+
+    loginBox.classList.add("hidden");
+    app.classList.remove("hidden");
+
+  }catch(e){
+    console.error(e);
+    loginMsg.innerText = "Erro ao conectar";
   }
-
-  cliente.innerText = lic[4];
-  plano.innerText = lic[5];
-  validade.innerText = lic[2];
-
-  loginBox.classList.add("hidden");
-  app.classList.remove("hidden");
 }
+</script>
 
-function logout(){
-  location.reload();
-}
 
 // ================= V82 LÓGICA =================
 function gerar(){
