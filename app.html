@@ -2,215 +2,64 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CORTE PRO v82</title>
+<title>SISTEMA DE CALCULO DE CORTE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-  margin:0;
-  font-family:Segoe UI,Arial;
-  background:linear-gradient(135deg,#020617,#0f172a);
-  color:#fff;
-}
-.hidden{display:none}
-.center{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.card{
-  background:#020617;
-  padding:25px;
-  border-radius:14px;
-  width:100%;
-  max-width:380px;
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
-}
-input,select,button{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-  border:none;
-  font-size:15px;
-}
-button{
-  background:#10b981;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-}
-button.alt{background:#3b82f6}
-button.gray{background:#64748b}
-.msg{color:#f87171;text-align:center;margin-top:10px}
-.top{
-  background:#020617;
-  padding:14px;
-  text-align:center;
-  font-weight:bold;
-}
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
-}
-.box{
-  background:#020617;
-  padding:20px;
-  border-radius:14px;
-  margin-bottom:20px;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-  color:#020617;
-}
-th,td{
-  padding:8px;
-  border:1px solid #cbd5e1;
-  text-align:center;
-}
-th{background:#0f172a;color:#fff}
-.green{color:#22c55e}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div class="center" id="loginBox">
-  <div class="card">
-    <h3 style="text-align:center">🔒 SISTEMA DE CORTE PRO</h3>
-    <small style="display:block;text-align:center;color:#94a3b8">by Carlos-Daniel / DANI</small>
-    <input id="senhaInput" placeholder="Digite sua senha">
-    <button onclick="login()">ENTRAR</button>
-    <div class="msg" id="loginMsg"></div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app" class="hidden">
-  <div class="top">
-    SISTEMA DE CORTE PRO — Cliente: <span id="cliente">-</span> |
-    Plano: <span id="plano">-</span> |
-    Validade: <span id="validade">-</span>
-  </div>
-
-  <div class="container">
-
-    <div class="box">
-      <h2 style="text-align:center">SISTEMA DE CORTE v82.0</h2>
-
-      Largura (L):
-      <input id="largura" value="1.56">
-
-      Área:
-      <select id="area">
-        <option value="0.9">Médias (0.90m)</option>
-        <option value="1.2">Grandes (1.20m)</option>
-      </select>
-
-      Mesa:
-      <input id="mesa" value="7">
-
-      <button class="gray" onclick="gradeNumerica()">GRADE 38-58</button>
-      <button class="gray" onclick="gradeLetras()">GRADE LETRAS</button>
-      <button class="gray" onclick="addLinha()">+ TAMANHO</button>
-
-      <table id="tabela">
-        <thead>
-          <tr><th>TAM</th><th>QTD</th><th>X</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <button onclick="gerar()">⚡ GERAR ENFESTOS</button>
-      <button class="alt" onclick="window.print()">🖨 IMPRIMIR</button>
-    </div>
-
-    <div class="box hidden" id="result">
-      <h3>ENFESTO PRINCIPAL</h3>
-      <div id="enf1"></div>
-
-      <h3>ENFESTO ALTERNATIVO 2</h3>
-      <div id="enf2"></div>
-
-      <h3>ENFESTO ALTERNATIVO 3</h3>
-      <div id="enf3"></div>
-    </div>
-
-  </div>
-</div>
-
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTuSmsymsS19AqaRjVWOlcRA2FfU4yanFPiTFIvp4_VPyxm3vFF0i0ocZAY7hoe1XzfwP0wslP2dKWR/pub?output=csv";
-
-async function login(){
-  const senha = senhaInput.value.trim();
-  loginMsg.innerText = "";
-
-  const r = await fetch(CSV_URL+"&_="+Date.now());
-  const t = await r.text();
-  const linhas = t.split("\n").map(l=>l.replace(/\r/g,"").split(","));
-
-  const dados = linhas.slice(1);
-  const lic = dados.find(l => l[1] === senha);
-
-  if(!lic){ loginMsg.innerText="Senha inválida"; return; }
-  if(lic[0] !== "ON"){ loginMsg.innerText="Licença bloqueada"; return; }
-
-  cliente.innerText = lic[4];
-  plano.innerText = lic[5] || "-";
-  validade.innerText = lic[2];
-
-  loginBox.classList.add("hidden");
-  app.classList.remove("hidden");
-}
-
-function gradeLetras(){
-  const t = document.querySelector("#tabela tbody");
-  t.innerHTML="";
-  ["P","M","G","GG"].forEach(s=>{
-    t.innerHTML+=`<tr><td>${s}</td><td><input value="0"></td><td>X</td></tr>`;
-  });
-}
-
-function gradeNumerica(){
-  const t = document.querySelector("#tabela tbody");
-  t.innerHTML="";
-  for(let i=38;i<=58;i+=2){
-    t.innerHTML+=`<tr><td>${i}</td><td><input value="0"></td><td>X</td></tr>`;
-  }
-}
-
-function addLinha(){
-  document.querySelector("#tabela tbody")
-    .innerHTML+=`<tr><td><input></td><td><input></td><td>X</td></tr>`;
-}
-
-function gerar(){
-  const rows=[...document.querySelectorAll("#tabela tbody tr")];
-  if(!rows.length)return;
-  result.classList.remove("hidden");
-
-  function montar(mult){
-    let html="<table><tr><th>TAM</th><th>PED</th><th>MLD</th></tr>";
-    rows.forEach(r=>{
-      const t=r.children[0].innerText||r.children[0].children[0].value;
-      const q=Number(r.children[1].children[0].value||0);
-      const m=Math.max(1,Math.floor(q/mult));
-      html+=`<tr><td>${t}</td><td>${q}</td><td>${m}</td></tr>`;
-    });
-    return html+"</table>";
-  }
-
-  enf1.innerHTML = montar(1);
-  enf2.innerHTML = montar(2);
-  enf3.innerHTML = montar(3);
+if(localStorage.getItem("LIC_OK")!=="1"){
+  location.href="index.html";
 }
 </script>
 
+<style>
+body{margin:0;font-family:Segoe UI,Arial}
+.top{
+  background:#020617;
+  color:#fff;
+  padding:12px;
+  text-align:center;
+  font-weight:bold;
+}
+button.sair{
+  position:fixed;
+  top:10px;
+  right:10px;
+  background:#dc2626;
+  color:#fff;
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  z-index:999;
+}
+iframe{
+  width:100%;
+  height:calc(100vh - 60px);
+  border:none;
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+SISTEMA DE CÁLCULO DE CORTE |
+Cliente: <b id="c"></b> |
+Plano: <b id="p"></b> |
+Validade: <b id="v"></b>
+</div>
+
+<button class="sair" onclick="sair()">SAIR</button>
+
+<iframe src="v82.html"></iframe>
+
+<script>
+c.innerText = localStorage.getItem("CLIENTE");
+p.innerText = localStorage.getItem("PLANO");
+v.innerText = localStorage.getItem("VALIDADE");
+function sair(){
+  localStorage.clear();
+  location.href="index.html";
+}
+</script>
 </body>
 </html>
