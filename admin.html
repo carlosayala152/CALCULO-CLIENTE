@@ -9,17 +9,21 @@
 body{
   margin:0;
   font-family:Segoe UI,Arial,sans-serif;
-  background:linear-gradient(135deg,#020617,#0f172a);
-  color:#e5e7eb;
+  background:#0f172a;
+  color:#fff;
 }
-header{
+.topo{
   background:#020617;
-  padding:18px;
+  padding:14px;
   text-align:center;
+  font-size:20px;
+  font-weight:bold;
 }
-header h1{margin:0;font-size:22px}
-header small{color:#94a3b8}
-
+.topo small{
+  display:block;
+  font-size:13px;
+  color:#94a3b8;
+}
 .container{
   max-width:1100px;
   margin:auto;
@@ -28,9 +32,8 @@ header small{color:#94a3b8}
 .card{
   background:#020617;
   padding:20px;
-  border-radius:14px;
+  border-radius:12px;
   margin-bottom:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
 }
 input,select,button{
   width:100%;
@@ -38,138 +41,141 @@ input,select,button{
   margin-top:8px;
   border-radius:8px;
   border:none;
+  font-size:15px;
 }
-button{
+button.primary{
   background:#10b981;
   color:#fff;
   font-weight:bold;
   cursor:pointer;
 }
-button.red{background:#dc2626}
-button.gray{background:#64748b}
-
+button.secondary{
+  background:#64748b;
+  color:#fff;
+}
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:15px;
-  background:#020617;
 }
 th,td{
+  padding:10px;
   border:1px solid #1e293b;
-  padding:8px;
   text-align:center;
 }
-th{background:#0f172a}
-
+th{
+  background:#0f172a;
+}
 .badge-on{color:#22c55e;font-weight:bold}
 .badge-off{color:#ef4444;font-weight:bold}
-.actions button{margin:2px;font-size:12px}
-
+.actions button{margin:2px;padding:6px 8px;font-size:13px}
+.msg{color:#f87171;margin-top:10px;font-size:14px}
 .hidden{display:none}
-.msg{color:#f87171;margin-top:10px}
 </style>
 </head>
 
 <body>
 
-<header>
-  <h1>SISTEMA DE CORTE PRO</h1>
+<div class="topo">
+  SISTEMA DE CORTE PRO
   <small>Admin • by Carlos Daniel / DANI</small>
-</header>
-
-<!-- LOGIN -->
-<div class="container" id="loginBox">
-  <div class="card">
-    <h3>Login Admin</h3>
-    <input type="password" id="adminPass" placeholder="Senha admin">
-    <button onclick="login()">Entrar</button>
-    <div class="msg" id="msg"></div>
-  </div>
 </div>
 
-<!-- PAINEL -->
-<div class="container hidden" id="panel">
+<div class="container">
 
-  <!-- FORM CLIENTE -->
-  <div class="card">
-    <h3 id="formTitle">Criar Cliente</h3>
-
-    <select id="status">
-      <option value="ON">ON</option>
-      <option value="OFF">OFF</option>
-    </select>
-
-    <input id="senha" placeholder="Senha do cliente">
-    <input id="validade" type="date">
-    <input id="cliente" placeholder="Nome do cliente">
-
-    <select id="plano">
-      <option>MENSAL</option>
-      <option>TRIMESTRAL</option>
-      <option>ANUAL</option>
-    </select>
-
-    <input type="hidden" id="linha">
-
-    <button onclick="salvar()">Salvar</button>
-    <button class="gray" onclick="limpar()">Cancelar</button>
+  <!-- LOGIN -->
+  <div class="card" id="loginBox">
+    <h3>Login Admin</h3>
+    <input type="password" id="adminPass" placeholder="Senha admin">
+    <button class="primary" onclick="login()">Entrar</button>
+    <div id="loginMsg" class="msg"></div>
   </div>
 
-  <!-- LISTA -->
-  <div class="card">
-    <h3>Clientes</h3>
+  <!-- PAINEL -->
+  <div class="hidden" id="panel">
 
-    <table>
-      <thead>
-        <tr>
-          <th>Status</th>
-          <th>Cliente</th>
-          <th>Senha</th>
-          <th>Validade</th>
-          <th>Plano</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="lista">
-        <tr><td colspan="6">Carregando...</td></tr>
-      </tbody>
-    </table>
+    <!-- FORMULÁRIO -->
+    <div class="card">
+      <h3 id="formTitle">Criar Cliente</h3>
+
+      <select id="status">
+        <option value="ON">ON</option>
+        <option value="OFF">OFF</option>
+      </select>
+
+      <input id="senha" placeholder="Senha do cliente">
+
+      <input id="validade" type="date">
+
+      <input id="cliente" placeholder="Nome do cliente">
+
+      <select id="plano">
+        <option>MENSAL</option>
+        <option>TRIMESTRAL</option>
+        <option>ANUAL</option>
+      </select>
+
+      <input type="hidden" id="linha">
+
+      <button class="primary" onclick="salvar()">Salvar</button>
+      <button class="secondary" onclick="limpar()">Cancelar</button>
+
+      <div id="formMsg" class="msg"></div>
+    </div>
+
+    <!-- TABELA DE CLIENTES -->
+    <div class="card">
+      <h3>Clientes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th><th>Cliente</th><th>Senha</th><th>Validade</th><th>Plano</th><th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="lista">
+          <tr><td colspan="6">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
-
 </div>
 
 <script>
-// ================= CONFIG =================
+// CONFIG
 const ADMIN_PASS = "Amor2403";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQcWaSSrpbMC5FYpUnSLKdSQ1lMC-hlZtwt5I_9ko1OonFTDpjwofx-si2ujC8sDDGmw/exec";
 
-// ================= LOGIN =================
+// LOGIN
 function login(){
   if(adminPass.value !== ADMIN_PASS){
-    msg.innerText = "Senha incorreta";
+    loginMsg.innerText = "Senha incorreta";
     return;
   }
   loginBox.classList.add("hidden");
   panel.classList.remove("hidden");
-  carregar();
+  carregarLista();
 }
 
-// ================= API =================
-async function api(dados){
-  const r = await fetch(SCRIPT_URL,{
-    method:"POST",
-    body:JSON.stringify(dados)
-  });
-  return r.json();
+// CHAMA O SCRIPT
+async function chamar(params){
+  const url = SCRIPT_URL + "?" + new URLSearchParams(params).toString();
+  const res = await fetch(url);
+  return res.json();
 }
 
-// ================= LOAD =================
-async function carregar(){
-  const r = await api({acao:"LISTAR"});
+// LISTAR CLIENTES
+async function carregarLista(){
+  const dados = await chamar({acao:"listar"});
   const tbody = document.getElementById("lista");
   tbody.innerHTML = "";
 
-  r.forEach((c,i)=>{
+  if(!Array.isArray(dados) || dados.length === 0){
+    tbody.innerHTML = "<tr><td colspan='6'>Nenhum cliente</td></tr>";
+    return;
+  }
+
+  dados.forEach((c,i) => {
     tbody.innerHTML += `
       <tr>
         <td class="${c.status==="ON"?"badge-on":"badge-off"}">${c.status}</td>
@@ -179,45 +185,13 @@ async function carregar(){
         <td>${c.plano}</td>
         <td class="actions">
           <button onclick="editar(${i})">Editar</button>
-          <button class="red" onclick="bloquear(${i})">ON/OFF</button>
+          <button onclick="alternar(${i})">${c.status==="ON"?"OFF":"ON"}</button>
         </td>
       </tr>`;
   });
 }
 
-// ================= CRUD =================
-async function salvar(){
-  await api({
-    acao: linha.value ? "ATUALIZAR" : "CRIAR",
-    linha: linha.value,
-    status: status.value,
-    senha: senha.value,
-    validade: validade.value,
-    cliente: cliente.value,
-    plano: plano.value
-  });
-  limpar();
-  carregar();
-}
-
-function editar(i){
-  api({acao:"GET",linha:i}).then(c=>{
-    status.value = c.status;
-    senha.value = c.senha;
-    validade.value = c.validade;
-    cliente.value = c.cliente;
-    plano.value = c.plano;
-    linha.value = i;
-    formTitle.innerText = "Editar Cliente";
-  });
-}
-
-async function bloquear(i){
-  if(!confirm("Alternar status do cliente?")) return;
-  await api({acao:"TOGGLE",linha:i});
-  carregar();
-}
-
+// LIMPAR FORMULÁRIO
 function limpar(){
   status.value="ON";
   senha.value="";
@@ -226,12 +200,64 @@ function limpar(){
   plano.value="MENSAL";
   linha.value="";
   formTitle.innerText="Criar Cliente";
+  formMsg.innerText="";
+}
+
+// SALVAR (CRIAR / EDITAR)
+async function salvar(){
+  if(!senha.value || !validade.value || !cliente.value){
+    formMsg.innerText = "Preencha todos os campos";
+    return;
+  }
+
+  const params = {
+    acao:"salvar",
+    status: status.value,
+    senha: senha.value,
+    validade: validade.value,
+    cliente: cliente.value,
+    plano: plano.value
+  };
+
+  if(linha.value){
+    params.linha = linha.value;
+    params.acao = "atualizar";
+  }
+
+  await chamar(params);
+  limpar();
+  carregarLista();
+}
+
+// EDITAR
+async function editar(i){
+  const dados = await chamar({acao:"listar"});
+  const item = dados[i];
+
+  status.value = item.status;
+  senha.value   = item.senha;
+  validade.value= item.validade;
+  cliente.value = item.cliente;
+  plano.value   = item.plano;
+  linha.value   = i;
+  formTitle.innerText = "Editar Cliente";
+}
+
+// ALTERNAR ON/OFF
+async function alternar(i){
+  const dados = await chamar({acao:"listar"});
+  const atual = dados[i];
+  await chamar({
+    acao:"salvar",
+    status: atual.status==="ON"?"OFF":"ON",
+    senha: atual.senha,
+    validade: atual.validade,
+    cliente: atual.cliente,
+    plano: atual.plano
+  });
+  carregarLista();
 }
 </script>
 
 </body>
 </html>
-
-
-
-
