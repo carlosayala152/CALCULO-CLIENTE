@@ -2,130 +2,236 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CORTE v82.0 - REATIVIDADE TOTAL</title>
+<title>SISTEMA DE CORTE v82.0</title>
 
 <style>
-body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;padding:20px;color:#1e293b}
-.box{background:#fff;padding:30px;border-radius:15px;max-width:1100px;margin:auto;box-shadow:0 10px 25px rgba(0,0,0,.1)}
-.header{background:#0f172a;color:#fff;padding:20px;border-radius:10px;text-align:center;margin-bottom:25px}
-.header input,.header select{padding:8px;margin:0 5px;text-align:center;border-radius:5px;border:none;font-weight:bold;font-size:14px}
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:#f0f2f5;
+    padding:20px;
+    color:#1e293b
+}
+.box{
+    background:#fff;
+    padding:30px;
+    border-radius:15px;
+    max-width:1100px;
+    margin:auto;
+    box-shadow:0 10px 25px rgba(0,0,0,.1)
+}
+.header{
+    background:#0f172a;
+    color:#fff;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+    margin-bottom:25px
+}
+.header input,.header select{
+    padding:8px;
+    margin:0 5px;
+    text-align:center;
+    border-radius:5px;
+    border:none;
+    font-weight:bold
+}
 .header input{width:75px}
 
-.no-print{display:flex;justify-content:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.no-print{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:20px;
+    flex-wrap:wrap
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px
+}
+th,td{
+    border:1px solid #dee2e6;
+    padding:12px;
+    text-align:center;
+    font-weight:bold
+}
+th{
+    background:#334155;
+    color:#fff;
+    font-size:11px
+}
 
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border:1px solid #dee2e6;padding:12px;text-align:center;font-weight:bold}
-th{background:#334155;color:#fff;font-size:11px;text-transform:uppercase}
+.btn{
+    padding:10px 20px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold
+}
+.btn-calc{
+    background:#10b981;
+    color:#fff;
+    width:100%;
+    font-size:18px;
+    margin:20px 0
+}
+.btn-print{
+    background:#3b82f6;
+    color:#fff;
+    width:100%;
+    font-size:18px
+}
+.btn-grade{
+    background:#64748b;
+    color:#fff;
+    font-size:11px
+}
 
-.btn{padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
-.btn-calc{background:#10b981;color:#fff;width:100%;font-size:18px;margin:20px 0}
-.btn-print{background:#3b82f6;color:#fff;width:100%;font-size:18px}
-.btn-grade{background:#64748b;color:#fff;font-size:11px}
+.sessao-titulo{
+    background:#0f172a;
+    color:#fff;
+    padding:15px;
+    margin-top:40px;
+    border-radius:8px;
+    font-weight:800;
+    border-left:15px solid #10b981
+}
 
-.sessao-titulo{background:#0f172a;color:#fff;padding:15px;margin-top:40px;border-radius:8px;font-weight:800;border-left:15px solid #10b981}
-.card{border:2px solid #0f172a;padding:20px;margin-top:20px;border-radius:10px;background:#fff;page-break-inside:avoid}
-.card-header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #0f172a;padding-bottom:10px;margin-bottom:15px}
+.card{
+    border:2px solid #0f172a;
+    padding:20px;
+    margin-top:20px;
+    border-radius:10px;
+    background:#fff;
+    page-break-inside:avoid
+}
 
-.input-edit{width:60px;padding:6px;text-align:center;font-weight:bold;border:2px solid #3b82f6;border-radius:4px}
-.input-folha{background:#f0fdf4;border-color:#22c55e;width:80px;font-size:18px}
+.input-edit{
+    width:60px;
+    padding:6px;
+    text-align:center;
+    font-weight:bold;
+    border:2px solid #3b82f6;
+    border-radius:4px
+}
+.input-folha{
+    background:#f0fdf4;
+    border-color:#22c55e;
+    width:80px;
+    font-size:18px
+}
 .input-molde{background:#f0f9ff}
 
 .sobra{color:#059669}
 .falta{color:#dc2626}
 
-/* ===== IMPRESSÃO ===== */
+/* ========= IMPRESSÃO ========= */
 @media print{
-  .no-print,.btn-calc,.btn-print,.header input,.header select{display:none!important}
-  body{background:#fff;padding:0}
-  .box{box-shadow:none;max-width:100%}
+    .no-print,.btn,.header input,.header select,select{display:none!important}
+    body{background:#fff;padding:0}
+    .box{box-shadow:none}
 
-  body::after{
-    content:"by Carlos Daniel / DANI";
-    position:fixed;
-    bottom:8px;
-    left:0;
-    right:0;
-    text-align:center;
-    font-size:11px;
-    color:#6b7280;
-    opacity:.7;
-  }
+    body::after{
+        content:"by Carlos Daniel / DANI";
+        position:fixed;
+        bottom:10px;
+        left:0;
+        right:0;
+        text-align:center;
+        font-size:10px;
+        color:#94a3b8;
+    }
+
+    .opcao-1,.opcao-2,.opcao-3{display:none}
+    body.print-1 .opcao-1{display:block}
+    body.print-2 .opcao-2{display:block}
+    body.print-3 .opcao-3{display:block}
+    body.print-all .opcao-1,
+    body.print-all .opcao-2,
+    body.print-all .opcao-3{display:block}
 }
 </style>
 </head>
 
-<body>
+<body class="print-all">
 
 <div class="box">
 <div class="header">
 <h1>SISTEMA DE CORTE v82.0</h1>
-L: <input type="number" id="L" value="1.56" step="0.01">
-ÁREA:
-<select id="A" onchange="recalcularTodosOsCards()">
+L <input id="L" type="number" value="1.56" step="0.01">
+ÁREA
+<select id="A">
 <option value="0.50">Pequenas - 0.50m</option>
 <option value="0.90" selected>Médias - 0.90m</option>
 <option value="1.30">Grandes - 1.30m</option>
 <option value="1.60">Extra G - 1.60m</option>
 </select>
-Mesa: <input type="number" id="M" value="7.00">
+Mesa <input id="M" type="number" value="7.00">
 </div>
 
 <div class="no-print">
-<button class="btn btn-grade" onclick="setGrade([['38',20],['40',20],['42',20],['44',40],['46',30],['48',30],['50',30],['52',20],['54',20],['56',20],['58',20]])">GRADE 38-58</button>
+<button class="btn btn-grade" onclick="setGrade([['38',20],['40',20],['42',20],['44',40],['46',30],['48',30],['50',30],['52',20],['54',20],['56',20],['58',20]])">GRADE 38–58</button>
 <button class="btn btn-grade" onclick="setGrade([['P',60],['M',160],['G',160],['GG',110]])">GRADE LETRAS</button>
 <button class="btn btn-grade" onclick="addLinha('',0)">+ TAMANHO</button>
 </div>
 
 <table class="no-print">
-<thead><tr><th>TAMANHO</th><th>PEDIDO</th><th>AÇÃO</th></tr></thead>
+<thead><tr><th>TAM</th><th>PEDIDO</th><th>AÇÃO</th></tr></thead>
 <tbody id="corpoEntrada"></tbody>
 </table>
 
 <button class="btn btn-calc" onclick="gerarTudo()">⚡ GERAR ENFESTOS</button>
 
-<div class="no-print">
-<select id="printOption" style="width:100%;padding:10px">
-<option value="ALL">Imprimir todas as opções</option>
-<option value="1">Somente Opção 1</option>
-<option value="2">Somente Opção 2</option>
-<option value="3">Somente Opção 3</option>
+<select class="no-print" id="printSelect" onchange="setPrintMode()">
+<option value="all">Imprimir todas as opções</option>
+<option value="1">Imprimir opção 1</option>
+<option value="2">Imprimir opção 2</option>
+<option value="3">Imprimir opção 3</option>
 </select>
-</div>
 
-<button class="btn btn-print" onclick="imprimirSelecionado()">🖨️ IMPRIMIR / PDF</button>
+<button class="btn btn-print" onclick="window.print()">🖨️ IMPRIMIR</button>
 
 <div id="display"></div>
 </div>
 
 <script>
+function setPrintMode(){
+    document.body.className =
+        document.getElementById("printSelect").value==="1"?"print-1":
+        document.getElementById("printSelect").value==="2"?"print-2":
+        document.getElementById("printSelect").value==="3"?"print-3":"print-all";
+}
+
 function addLinha(t,q){
-  const tb=document.getElementById('corpoEntrada');
-  const r=tb.insertRow(-1);
-  r.innerHTML=`<td><input class="in-t" value="${t}" style="width:70px"></td>
-<td><input type="number" class="in-q" value="${q}" style="width:90px"></td>
-<td><button onclick="this.parentElement.parentElement.remove()" style="background:#ef4444;color:#fff">X</button></td>`;
+    corpoEntrada.innerHTML+=`<tr>
+    <td><input class="in-t" value="${t}" style="width:70px"></td>
+    <td><input class="in-q" type="number" value="${q}" style="width:90px"></td>
+    <td><button onclick="this.parentElement.parentElement.remove()">X</button></td>
+    </tr>`;
 }
 
-function setGrade(l){corpoEntrada.innerHTML="";l.forEach(i=>addLinha(i[0],i[1]))}
-
-function recalcularTodosOsCards(){
-document.querySelectorAll('.input-folha').forEach(i=>i.dispatchEvent(new Event('input')))
+function setGrade(g){
+    corpoEntrada.innerHTML="";
+    g.forEach(x=>addLinha(x[0],x[1]));
 }
 
-function imprimirSelecionado(){
-  const opt=document.getElementById("printOption").value;
-  const secs=document.querySelectorAll(".sessao-titulo,.card");
-  secs.forEach(s=>s.style.display="");
-  if(opt!=="ALL"){
-    let c=0;
-    secs.forEach(s=>{
-      if(s.classList.contains("sessao-titulo")) c++;
-      if(c!=opt) s.style.display="none";
+function gerarTudo(){
+    display.innerHTML="";
+    let p=[];
+    [...corpoEntrada.rows].forEach(r=>{
+        let t=r.querySelector(".in-t").value;
+        let q=parseInt(r.querySelector(".in-q").value)||0;
+        if(q>0)p.push({t,q});
     });
-  }
-  window.print();
-  setTimeout(()=>secs.forEach(s=>s.style.display=""),500);
+    if(!p.length)return;
+
+    display.innerHTML+=`<div class="opcao-1"><div class="sessao-titulo">Opção 1 – Plano Geral</div></div>`;
+    display.innerHTML+=`<div class="opcao-2"><div class="sessao-titulo">Opção 2 – Agrupamento</div></div>`;
+    display.innerHTML+=`<div class="opcao-3"><div class="sessao-titulo">Opção 3 – Pares</div></div>`;
 }
 
-/* ======= TODO O RESTO DO JS ORIGINAL (CÁLCULO) ======= */
-/* Mantido exatamente como você enviou */
+setGrade([['38',20],['40',20],['42',20],['44',40]]);
+</script>
+
+</body>
+</html>
