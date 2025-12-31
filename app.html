@@ -2,23 +2,35 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CALCULO DE CORTE</title>
+<title>SISTEMA DE CÁLCULO DE CORTE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- PROTEÇÃO DE LICENÇA -->
 <script>
-if(localStorage.getItem("LIC_OK")!=="1"){
-  location.href="index.html";
+if(localStorage.getItem("LIC_OK") !== "1"){
+  location.href = "index.html";
 }
 </script>
 
 <style>
-body{margin:0;font-family:Segoe UI,Arial}
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:#f1f5f9;
+}
 .top{
   background:#020617;
   color:#fff;
-  padding:12px;
+  padding:14px 10px;
   text-align:center;
   font-weight:bold;
+  line-height:1.4;
+}
+.top small{
+  display:block;
+  font-size:12px;
+  color:#94a3b8;
+  margin-top:4px;
 }
 button.sair{
   position:fixed;
@@ -27,39 +39,48 @@ button.sair{
   background:#dc2626;
   color:#fff;
   border:none;
-  padding:8px 14px;
+  padding:8px 16px;
   border-radius:8px;
   cursor:pointer;
   z-index:999;
+  font-weight:bold;
 }
 iframe{
   width:100%;
-  height:calc(100vh - 60px);
+  height:calc(100vh - 90px);
   border:none;
+  background:#fff;
 }
 </style>
 </head>
+
 <body>
 
+<!-- TOPO -->
 <div class="top">
-SISTEMA DE CÁLCULO DE CORTE |
-Cliente: <b id="c"></b> |
-Plano: <b id="p"></b> |
-Validade: <b id="v"></b>
+  SISTEMA DE CÁLCULO DE CORTE<br>
+  Cliente: <b id="c"></b> |
+  Plano: <b id="p"></b> |
+  Validade: <b id="v"></b>
+  <small>by Carlos Daniel / DANI</small>
 </div>
 
+<!-- SAIR -->
 <button class="sair" onclick="sair()">SAIR</button>
 
+<!-- SISTEMA V82 -->
 <iframe src="v82.html"></iframe>
 
 <script>
-c.innerText = localStorage.getItem("CLIENTE");
-p.innerText = localStorage.getItem("PLANO");
-v.innerText = localStorage.getItem("VALIDADE");
+document.getElementById("c").innerText = localStorage.getItem("CLIENTE") || "-";
+document.getElementById("p").innerText = localStorage.getItem("PLANO") || "-";
+document.getElementById("v").innerText = localStorage.getItem("VALIDADE") || "-";
+
 function sair(){
   localStorage.clear();
-  location.href="index.html";
+  location.href = "index.html";
 }
 </script>
+
 </body>
 </html>
