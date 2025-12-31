@@ -8,121 +8,152 @@
 <style>
 body{
   margin:0;
-  font-family:Segoe UI,Arial;
-  background:linear-gradient(135deg,#020617,#020617,#020617);
-  color:#fff;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:#0f172a;
+  color:#e5e7eb;
 }
-.top{
+header{
+  background:#020617;
+  padding:18px;
   text-align:center;
+}
+header h1{margin:0;font-size:22px}
+header small{color:#94a3b8}
+
+.container{
+  max-width:1100px;
+  margin:auto;
   padding:20px;
-  font-weight:bold;
-  font-size:20px;
 }
-.sub{
-  font-size:13px;
-  opacity:.7;
-}
-.box{
-  max-width:900px;
-  margin:20px auto;
-  background:#020617cc;
-  border-radius:16px;
+.card{
+  background:#020617;
   padding:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.6);
-}
-h3{
-  margin-top:0;
+  border-radius:14px;
+  margin-bottom:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
 }
 input,select,button{
   width:100%;
   padding:10px;
-  border-radius:10px;
+  margin-top:8px;
+  border-radius:8px;
   border:none;
-  margin-bottom:10px;
-  font-size:15px;
 }
-button.save{
+button{
   background:#10b981;
   color:#fff;
   font-weight:bold;
   cursor:pointer;
 }
-button.cancel{
-  background:#64748b;
-  color:#fff;
-  cursor:pointer;
-}
+button.red{background:#dc2626}
+button.gray{background:#64748b}
+
 table{
   width:100%;
   border-collapse:collapse;
-  margin-top:10px;
+  margin-top:15px;
 }
 th,td{
-  border-bottom:1px solid #334155;
+  border:1px solid #1e293b;
   padding:8px;
   text-align:center;
-  font-size:14px;
 }
-th{
-  opacity:.8;
+th{background:#0f172a}
+
+.badge-on{color:#22c55e;font-weight:bold}
+.badge-off{color:#ef4444;font-weight:bold}
+.actions button{margin:2px;font-size:12px}
+
+.hidden{display:none}
+.msg{color:#f87171;margin-top:10px}
+.top-actions{
+  display:flex; gap:10px; flex-wrap:wrap;
+}
+.search{
+  flex:1;
 }
 .footer{
   text-align:center;
+  color:#94a3b8;
   font-size:12px;
-  opacity:.6;
-  margin-top:20px;
+  margin:20px 0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="top">
-  SISTEMA DE CORTE PRO<br>
-  <span class="sub">Admin · by Carlos Daniel / DANI</span>
-</div>
+<header>
+  <h1>SISTEMA DE CORTE PRO</h1>
+  <small>Admin · by Carlos Daniel / DANI</small>
+</header>
 
-<div class="box">
-  <h3>Criar Cliente</h3>
+<div class="container">
 
-  <select id="status">
-    <option value="ON">ON</option>
-    <option value="OFF">OFF</option>
-  </select>
+  <!-- LOGIN -->
+  <div class="card" id="loginBox">
+    <h3>Login Admin</h3>
+    <input type="password" id="adminPass" placeholder="Senha admin">
+    <button onclick="login()">Entrar</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
 
-  <input id="senha" placeholder="Senha do cliente">
+  <!-- PAINEL -->
+  <div class="hidden" id="panel">
 
-  <input id="validade" type="date">
+    <!-- FORM -->
+    <div class="card">
+      <h3 id="formTitle">Criar Cliente</h3>
 
-  <input id="cliente" placeholder="Nome do cliente">
+      <select id="status">
+        <option value="ON">ON</option>
+        <option value="OFF">OFF</option>
+      </select>
 
-  <select id="plano">
-    <option value="MENSAL">MENSAL</option>
-    <option value="ANUAL">ANUAL</option>
-    <option value="VITALICIO">VITALÍCIO</option>
-  </select>
+      <input id="senha" placeholder="Senha do cliente">
+      <input id="validade" type="date">
+      <input id="cliente" placeholder="Nome do cliente">
 
-  <button class="save" onclick="criarCliente()">Salvar</button>
-  <button class="cancel" onclick="limpar()">Cancelar</button>
-</div>
+      <select id="plano">
+        <option>MENSAL</option>
+        <option>TRIMESTRAL</option>
+        <option>ANUAL</option>
+      </select>
 
-<div class="box">
-  <h3>Clientes</h3>
+      <input type="hidden" id="linha">
 
-  <table>
-    <thead>
-      <tr>
-        <th>Status</th>
-        <th>Cliente</th>
-        <th>Senha</th>
-        <th>Validade</th>
-        <th>Plano</th>
-      </tr>
-    </thead>
-    <tbody id="lista">
-      <tr><td colspan="5">Carregando...</td></tr>
-    </tbody>
-  </table>
+      <div class="top-actions">
+        <button onclick="salvar()">Salvar</button>
+        <button class="gray" onclick="limpar()">Cancelar</button>
+      </div>
+
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <!-- LISTA -->
+    <div class="card">
+      <h3>Clientes</h3>
+
+      <input class="search" id="busca" placeholder="Buscar cliente..." oninput="filtrar()">
+
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Cliente</th>
+            <th>Senha</th>
+            <th>Validade</th>
+            <th>Plano</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="lista">
+          <tr><td colspan="6">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
 
 <div class="footer">
@@ -130,71 +161,125 @@ th{
 </div>
 
 <script>
+// ================= CONFIG =================
+const ADMIN_PASS = "Amor2403";
 const API = "https://script.google.com/macros/s/AKfycbzP1WYuEkNrGOpwtLQy8mdG9kcVO1Ue9WWjpITwBnp-suCrFZ2VpGwBmUQRXIu-Pcaa8Q/exec";
 
-async function carregarClientes(){
-  try{
-    const r = await fetch(API + "?acao=listar");
-    const dados = await r.json();
+// ================= LOGIN =================
+function login(){
+  if(adminPass.value !== ADMIN_PASS){
+    loginMsg.innerText = "Senha incorreta";
+    return;
+  }
+  loginBox.classList.add("hidden");
+  panel.classList.remove("hidden");
+  carregar();
+}
 
-    const lista = document.getElementById("lista");
-    lista.innerHTML = "";
+// ================= API =================
+async function chamar(params){
+  const url = API + "?" + new URLSearchParams(params).toString();
+  const r = await fetch(url);
+  return r.json();
+}
 
-    dados.forEach(c=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${c.status}</td>
+// ================= LOAD =================
+let cache = [];
+
+async function carregar(){
+  const dados = await chamar({acao:"listar"});
+  cache = dados;
+  render(dados);
+}
+
+function render(dados){
+  const tbody = document.getElementById("lista");
+  tbody.innerHTML = "";
+
+  if(!Array.isArray(dados) || dados.length===0){
+    tbody.innerHTML = "<tr><td colspan='6'>Nenhum cliente</td></tr>";
+    return;
+  }
+
+  dados.forEach((c,i)=>{
+    tbody.innerHTML += `
+      <tr>
+        <td class="${c.status==="ON"?"badge-on":"badge-off"}">${c.status}</td>
         <td>${c.cliente}</td>
         <td>${c.senha}</td>
         <td>${c.validade}</td>
         <td>${c.plano}</td>
-      `;
-      lista.appendChild(tr);
-    });
-
-  }catch(e){
-    document.getElementById("lista").innerHTML =
-      "<tr><td colspan='5'>Erro ao carregar</td></tr>";
-  }
+        <td class="actions">
+          <button onclick="editar(${i})">Editar</button>
+          <button class="red" onclick="toggle(${i})">ON/OFF</button>
+        </td>
+      </tr>`;
+  });
 }
 
-async function criarCliente(){
-  const status = statusEl().value;
-  const senha = senhaEl().value;
-  const validade = validadeEl().value;
-  const cliente = clienteEl().value;
-  const plano = planoEl().value;
-
-  if(!senha || !validade || !cliente){
-    alert("Preencha todos os campos");
+// ================= CRUD =================
+async function salvar(){
+  if(!senha.value || !validade.value || !cliente.value){
+    formMsg.innerText = "Preencha todos os campos";
     return;
   }
 
-  const url = `${API}?acao=criar&status=${status}&senha=${senha}&validade=${validade}&cliente=${cliente}&plano=${plano}`;
-  const r = await fetch(url);
-  const j = await r.json();
+  const p = {
+    acao: linha.value ? "editar" : "criar",
+    linha: linha.value,
+    status: status.value,
+    senha: senha.value,
+    validade: validade.value,
+    cliente: cliente.value,
+    plano: plano.value
+  };
 
-  if(j.ok){
-    alert("Cliente criado com sucesso");
-    limpar();
-    carregarClientes();
-  }else{
-    alert(j.erro || "Erro");
-  }
+  await chamar(p);
+  limpar();
+  carregar();
+}
+
+function editar(i){
+  const c = cache[i];
+  status.value = c.status;
+  senha.value = c.senha;
+  validade.value = c.validade;
+  cliente.value = c.cliente;
+  plano.value = c.plano;
+  linha.value = c.linha;
+  formTitle.innerText = "Editar Cliente";
+}
+
+async function toggle(i){
+  const c = cache[i];
+  await chamar({
+    acao:"editar",
+    linha:c.linha,
+    status: c.status==="ON"?"OFF":"ON",
+    senha:c.senha,
+    validade:c.validade,
+    cliente:c.cliente,
+    plano:c.plano
+  });
+  carregar();
 }
 
 function limpar(){
-  senhaEl().value="";
-  clienteEl().value="";
+  status.value="ON";
+  senha.value="";
+  validade.value="";
+  cliente.value="";
+  plano.value="MENSAL";
+  linha.value="";
+  formTitle.innerText="Criar Cliente";
+  formMsg.innerText="";
 }
 
-const statusEl=()=>document.getElementById("status");
-const senhaEl=()=>document.getElementById("senha");
-const validadeEl=()=>document.getElementById("validade");
-const clienteEl=()=>document.getElementById("cliente");
-const planoEl=()=>document.getElementById("plano");
-
-window.onload = carregarClientes;
+// ================= BUSCA =================
+function filtrar(){
+  const q = busca.value.toLowerCase();
+  render(cache.filter(c=>c.cliente.toLowerCase().includes(q)));
+}
 </script>
 
 </body>
