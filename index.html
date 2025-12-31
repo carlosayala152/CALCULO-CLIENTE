@@ -2,19 +2,18 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CORTE PRO</title>
+<title>SISTEMA DE CALCULO DE CORTE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body{
   margin:0;
   font-family:Segoe UI,Arial;
-  background:linear-gradient(135deg,#020617,#0f172a);
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  background:#0f172a;
   color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 .box{
   background:#020617;
@@ -23,10 +22,7 @@ body{
   width:100%;
   max-width:360px;
   text-align:center;
-  box-shadow:0 20px 40px rgba(0,0,0,.4);
 }
-h1{margin:0;font-size:20px}
-small{color:#94a3b8}
 input,button{
   width:100%;
   padding:12px;
@@ -34,26 +30,23 @@ input,button{
   border-radius:8px;
   border:none;
 }
-input{font-size:16px}
 button{
   background:#10b981;
   color:#fff;
   font-weight:bold;
   cursor:pointer;
 }
-#msg{margin-top:10px;color:#f87171}
+#msg{color:#f87171;margin-top:10px}
 </style>
 </head>
-
 <body>
 
 <div class="box">
-  <h1>🔒 SISTEMA DE CORTE PRO</h1>
-  <small>by Carlos-Daniel / DANI</small>
+  <h2>SISTEMA DE CÁLCULO DE CORTE</h2>
+  <small>Digite sua senha</small>
 
-  <input id="senha" placeholder="Digite sua senha">
+  <input id="senha" placeholder="Senha">
   <button onclick="entrar()">ENTRAR</button>
-
   <div id="msg"></div>
 </div>
 
@@ -67,16 +60,20 @@ function hoje(){
 async function entrar(){
   msg.innerText="Verificando...";
   try{
-    const res = await fetch(CSV_URL+"?_="+Date.now());
-    const txt = await res.text();
-    const linhas = txt.trim().split("\n").map(l=>l.split(","));
-    const pass = senha.value.trim();
+    const r = await fetch(CSV_URL + "&_=" + Date.now());
+    const t = await r.text();
+    const linhas = t
+      .split("\n")
+      .map(l => l.replace(/\r/g,""))
+      .map(l => l.split(",").map(c => c.replace(/"/g,"").trim()));
 
-    for(let i=1;i<linhas.length;i++){
-      const [status,senhaCSV,validade,pc,cliente,plano] = linhas[i];
+    const dados = linhas.slice(1);
+    const senhaDigitada = senha.value.trim();
 
-      if(pass===senhaCSV){
-        if(status!=="ON"){
+    for(const l of dados){
+      const [status,pass,validade,pc,cliente,plano] = l;
+      if(pass === senhaDigitada){
+        if(status !== "ON"){
           msg.innerText="Sistema bloqueado";
           return;
         }
@@ -84,23 +81,19 @@ async function entrar(){
           msg.innerText="Licença vencida";
           return;
         }
-
-        localStorage.setItem("LICENCA_OK","1");
+        localStorage.setItem("LIC_OK","1");
         localStorage.setItem("CLIENTE",cliente);
         localStorage.setItem("PLANO",plano);
         localStorage.setItem("VALIDADE",validade);
-
-        window.location.href="app.html";
+        location.href="app.html";
         return;
       }
     }
-
     msg.innerText="Senha inválida";
-  }catch(e){
+  }catch{
     msg.innerText="Erro de conexão";
   }
 }
 </script>
-
 </body>
 </html>
