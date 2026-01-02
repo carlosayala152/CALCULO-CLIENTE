@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CORTE v82.0 FINAL</title>
+<title>SISTEMA DE CORTE v82.0</title>
 
 <style>
 body{
@@ -19,6 +19,8 @@ body{
     padding:25px;
     box-shadow:0 20px 40px rgba(0,0,0,.15);
 }
+
+/* TOPO */
 .header{
     background:linear-gradient(135deg,#0f172a,#020617);
     color:#fff;
@@ -26,12 +28,18 @@ body{
     border-radius:12px;
     text-align:center;
 }
+.header img{
+    width:90px;
+    margin-bottom:10px;
+}
 .header input,.header select{
     padding:6px 10px;
     border-radius:6px;
     border:none;
     font-weight:bold;
 }
+
+/* BOTÕES */
 .controls{
     margin:20px 0;
     display:flex;
@@ -48,6 +56,8 @@ body{
     font-weight:bold;
     cursor:pointer;
 }
+
+/* TABELA */
 table{
     width:100%;
     border-collapse:collapse;
@@ -63,6 +73,8 @@ th{
     color:#fff;
     font-size:12px;
 }
+
+/* BOTÕES GRANDES */
 .btn-main{
     width:100%;
     margin:15px 0;
@@ -75,6 +87,8 @@ th{
 }
 .gerar{background:#10b981;color:#fff;}
 .imprimir{background:#3b82f6;color:#fff;}
+
+/* ENFESTOS */
 .section{
     margin-top:35px;
 }
@@ -99,23 +113,16 @@ th{
     font-weight:bold;
     margin-bottom:10px;
 }
-.card input{
-    width:60px;
-    padding:4px;
-    text-align:center;
-    font-weight:bold;
-}
 .ok{color:green;font-weight:bold;}
 .bad{color:red;font-weight:bold;}
 
+/* IMPRESSÃO */
 @media print{
-    body{background:#fff;}
     .controls,.btn-main,.header input,.header select{display:none!important;}
-    .container{box-shadow:none;}
     body:after{
         content:"SISTEMA DE CÁLCULO DE CORTE PRO";
         position:fixed;
-        bottom:20px;
+        bottom:15px;
         left:0;
         right:0;
         text-align:center;
@@ -130,7 +137,9 @@ th{
 <body>
 <div class="container">
 
+<!-- CABEÇALHO -->
 <div class="header">
+<img src="SISTEMA%20DE%20CORTE%20PRO.png">
 <h1>SISTEMA DE CORTE v82.0</h1>
 L <input id="L" type="number" value="1.56" step="0.01">
 ÁREA
@@ -143,12 +152,14 @@ L <input id="L" type="number" value="1.56" step="0.01">
 Mesa <input id="M" type="number" value="7">
 </div>
 
+<!-- CONTROLES -->
 <div class="controls">
 <button onclick="grade38()">GRADE 38-58</button>
 <button onclick="gradeLetras()">GRADE LETRAS</button>
 <button onclick="addLinha()">+ TAMANHO</button>
 </div>
 
+<!-- ENTRADA -->
 <table>
 <thead>
 <tr><th>TAM</th><th>PEDIDO</th><th>AÇÃO</th></tr>
@@ -156,15 +167,20 @@ Mesa <input id="M" type="number" value="7">
 <tbody id="entrada"></tbody>
 </table>
 
+<!-- BOTÕES -->
 <button class="btn-main gerar" onclick="gerar()">⚡ GERAR ENFESTOS</button>
 <button class="btn-main imprimir" onclick="window.print()">🖨 IMPRIMIR</button>
 
+<!-- SAÍDA -->
 <div id="saida"></div>
 
 </div>
 
 <script>
-function addLinha(t='',q=''){
+const entrada=document.getElementById("entrada");
+const saida=document.getElementById("saida");
+
+function addLinha(t="",q=""){
 entrada.innerHTML+=`
 <tr>
 <td><input value="${t}"></td>
@@ -174,49 +190,54 @@ entrada.innerHTML+=`
 }
 
 function grade38(){
-entrada.innerHTML='';
-[['38',20],['40',20],['42',20],['44',40],['46',30],['48',30],['50',30],['52',20],['54',20],['56',20],['58',20]].forEach(x=>addLinha(x[0],x[1]));
+entrada.innerHTML="";
+[['38',20],['40',20],['42',20],['44',40],['46',30],['48',30],['50',30],['52',20],['54',20],['56',20],['58',20]]
+.forEach(x=>addLinha(x[0],x[1]));
 }
 function gradeLetras(){
-entrada.innerHTML='';
+entrada.innerHTML="";
 [['P',60],['M',160],['G',160],['GG',110]].forEach(x=>addLinha(x[0],x[1]));
 }
 
 function gerar(){
-saida.innerHTML='';
-let dados=[...entrada.querySelectorAll('tr')].map(r=>({
+saida.innerHTML="";
+let dados=[...entrada.querySelectorAll("tr")].map(r=>({
 t:r.children[0].children[0].value,
 q:+r.children[1].children[0].value
 })).filter(x=>x.q>0);
 
-if(!dados.length)return;
+if(!dados.length){
+alert("Informe os pedidos.");
+return;
+}
 
-let L=+L.value,A=+A.value,M=+M.value;
+let L=+document.getElementById("L").value;
+let A=+document.getElementById("A").value;
+let M=+document.getElementById("M").value;
 
 /* OPÇÃO 1 */
 saida.innerHTML+=`<div class="section"><div class="section-title">Opção 1 – Plano Geral</div></div>`;
-criarCard("ORDEM PADRÃO",dados,Math.min(...dados.map(x=>x.q)));
+criarEnfesto("ORDEM PADRÃO",dados);
 
-/* OPÇÃO 2 – AGRUPAMENTO */
-saida.innerHTML+=`<div class="section"><div class="section-title">Opção 2 – Agrupamento Otimizado</div></div>`;
-dados.forEach(d=>criarCard(`ENFESTO ${d.t}`,[d],d.q));
+/* OPÇÃO 2 */
+saida.innerHTML+=`<div class="section"><div class="section-title">Opção 2 – Agrupamento</div></div>`;
+dados.forEach(d=>criarEnfesto("ENFESTO "+d.t,[d]));
 
-/* OPÇÃO 3 – PARES */
+/* OPÇÃO 3 */
 saida.innerHTML+=`<div class="section"><div class="section-title">Opção 3 – Afinidade de Pares</div></div>`;
 let pares=[['M','G'],['GG','P']];
 pares.forEach(p=>{
 let a=dados.find(x=>x.t===p[0]);
 let b=dados.find(x=>x.t===p[1]);
-if(a&&b) criarCard(`OTIMIZADO ${a.t}+${b.t}`,[a,b],Math.min(a.q,b.q));
+if(a&&b) criarEnfesto("OTIMIZADO "+a.t+" + "+b.t,[a,b]);
 });
 }
 
-function criarCard(titulo,itens,folhas){
-let html=`<div class="card">
-<div class="card-header">${titulo} <span>FOLHAS <input value="${folhas}"></span></div>
-<table>
-<tr><th>TAM</th><th>PEDIDO</th><th>MOLDES</th><th>PROD</th><th>SALDO</th></tr>`;
+function criarEnfesto(titulo,itens){
+let folhas=Math.min(...itens.map(i=>i.q));
 let moldes=0;
+let html=`<div class="card"><div class="card-header">${titulo} <span>FOLHAS ${folhas}</span></div>
+<table><tr><th>TAM</th><th>PEDIDO</th><th>MOLDES</th><th>PROD</th><th>SALDO</th></tr>`;
 itens.forEach(i=>{
 let m=Math.max(1,Math.round(i.q/folhas));
 let prod=m*folhas;
@@ -227,13 +248,13 @@ html+=`<tr>
 <td class="${saldo>=0?'ok':'bad'}">${saldo>=0?'+':''}${saldo}</td>
 </tr>`;
 });
-let risco=(moldes*A/L).toFixed(2);
-html+=`</table>
-<div>RISCO: ${risco}m | MESA: ${risco<=M?'✔ OK':'⚠ PASSA'}</div></div>`;
+let risco=((moldes*+A.value)/+L.value).toFixed(2);
+html+=`</table><div>RISCO ${risco}m | MESA ${risco<=+M.value?'✔':'⚠ PASSA'}</div></div>`;
 saida.innerHTML+=html;
 }
 
 gradeLetras();
 </script>
+
 </body>
 </html>
