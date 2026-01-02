@@ -2,252 +2,238 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>SISTEMA DE CORTE v82.0</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISTEMA DE CORTE v82.0 FINAL</title>
 
 <style>
 body{
-  margin:0;
-  font-family:Segoe UI,Arial;
-  background:#f1f5f9;
-  color:#0f172a;
+    font-family:Segoe UI,Arial;
+    background:#eef2f7;
+    margin:0;
+    padding:20px;
 }
-
-/* ===== TOPO ===== */
-.topo{
-  background:linear-gradient(90deg,#0f172a,#064e3b);
-  color:#fff;
-  padding:20px;
-  text-align:center;
-  border-radius:0 0 18px 18px;
+.container{
+    max-width:1200px;
+    margin:auto;
+    background:#fff;
+    border-radius:16px;
+    padding:25px;
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
 }
-.topo img{
-  width:70px;
-  margin-bottom:10px;
-}
-.topo h1{margin:5px 0}
-
-/* ===== CONTAINER ===== */
-.box{
-  max-width:1200px;
-  margin:20px auto;
-  background:#fff;
-  padding:20px;
-  border-radius:16px;
-  box-shadow:0 15px 30px rgba(0,0,0,.1);
-}
-
-/* ===== BOTÕES ===== */
-.btn{
-  border:none;
-  border-radius:10px;
-  padding:14px;
-  font-weight:bold;
-  cursor:pointer;
-}
-.btn-green{background:#10b981;color:#fff}
-.btn-blue{background:#3b82f6;color:#fff}
-.btn-gray{background:#64748b;color:#fff}
-
-select,input{
-  padding:8px;
-  border-radius:8px;
-  border:1px solid #cbd5f5;
-  font-weight:bold;
-}
-
-/* ===== SEÇÕES ===== */
-.titulo{
-  margin-top:35px;
-  padding:15px;
-  color:#fff;
-  font-weight:bold;
-  border-radius:10px;
-  background:linear-gradient(90deg,#0ea5e9,#22c55e);
-}
-
-.card{
-  margin-top:15px;
-  border:2px solid #0f172a;
-  border-radius:12px;
-  padding:15px;
-  page-break-inside:avoid;
-}
-
-.card-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:bold;
-  border-bottom:2px solid #0f172a;
-  padding-bottom:8px;
-  margin-bottom:10px;
-}
-
-/* ===== TABELA ===== */
-table{width:100%;border-collapse:collapse}
-th,td{
-  border:1px solid #e5e7eb;
-  padding:10px;
-  text-align:center;
-}
-th{background:#1e293b;color:#fff}
-
-/* ===== RESULTADOS ===== */
-.ok{color:#16a34a;font-weight:bold}
-.bad{color:#dc2626;font-weight:bold}
-
-/* ===== IMPRESSÃO ===== */
-@media print{
-  .no-print{display:none!important}
-  body{background:#fff}
-  .box{box-shadow:none}
-  footer{
-    position:fixed;
-    bottom:10px;
-    width:100%;
+.header{
+    background:linear-gradient(135deg,#0f172a,#020617);
+    color:#fff;
+    padding:20px;
+    border-radius:12px;
     text-align:center;
+}
+.header input,.header select{
+    padding:6px 10px;
+    border-radius:6px;
+    border:none;
+    font-weight:bold;
+}
+.controls{
+    margin:20px 0;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+.controls button{
+    background:#64748b;
+    color:#fff;
+    border:none;
+    padding:8px 14px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+th,td{
+    border:1px solid #cbd5e1;
+    padding:8px;
+    text-align:center;
+}
+th{
+    background:#1e293b;
+    color:#fff;
     font-size:12px;
-    color:rgba(0,128,128,.25);
-  }
+}
+.btn-main{
+    width:100%;
+    margin:15px 0;
+    padding:14px;
+    font-size:18px;
+    font-weight:bold;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+.gerar{background:#10b981;color:#fff;}
+.imprimir{background:#3b82f6;color:#fff;}
+.section{
+    margin-top:35px;
+}
+.section-title{
+    background:linear-gradient(135deg,#0ea5e9,#22c55e);
+    color:#fff;
+    padding:12px;
+    border-radius:10px;
+    font-weight:800;
+}
+.card{
+    border:2px solid #0f172a;
+    border-radius:12px;
+    padding:15px;
+    margin-top:15px;
+    page-break-inside:avoid;
+}
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+.card input{
+    width:60px;
+    padding:4px;
+    text-align:center;
+    font-weight:bold;
+}
+.ok{color:green;font-weight:bold;}
+.bad{color:red;font-weight:bold;}
+
+@media print{
+    body{background:#fff;}
+    .controls,.btn-main,.header input,.header select{display:none!important;}
+    .container{box-shadow:none;}
+    body:after{
+        content:"SISTEMA DE CÁLCULO DE CORTE PRO";
+        position:fixed;
+        bottom:20px;
+        left:0;
+        right:0;
+        text-align:center;
+        font-size:12px;
+        opacity:0.25;
+        color:#16a34a;
+    }
 }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<div class="topo">
-  <img src="SISTEMA DE CORTE PRO.png">
-  <h1>SISTEMA DE CORTE v82.0</h1>
-  <div>by Carlos Daniel / DANI</div>
+<div class="header">
+<h1>SISTEMA DE CORTE v82.0</h1>
+L <input id="L" type="number" value="1.56" step="0.01">
+ÁREA
+<select id="A">
+<option value="0.50">Pequena - 0.50</option>
+<option value="0.90" selected>Média - 0.90</option>
+<option value="1.30">Grande - 1.30</option>
+<option value="1.60">Extra G - 1.60</option>
+</select>
+Mesa <input id="M" type="number" value="7">
 </div>
 
-<div class="box">
-
-<!-- CONTROLES -->
-<div class="no-print">
-  <button class="btn btn-gray" onclick="gradeNumeros()">GRADE 38–58</button>
-  <button class="btn btn-gray" onclick="gradeLetras()">GRADE LETRAS</button>
-  <button class="btn btn-gray" onclick="addLinha()">+ TAMANHO</button>
+<div class="controls">
+<button onclick="grade38()">GRADE 38-58</button>
+<button onclick="gradeLetras()">GRADE LETRAS</button>
+<button onclick="addLinha()">+ TAMANHO</button>
 </div>
 
-<table class="no-print">
+<table>
 <thead>
-<tr><th>TAMANHO</th><th>PEDIDO</th><th>AÇÃO</th></tr>
+<tr><th>TAM</th><th>PEDIDO</th><th>AÇÃO</th></tr>
 </thead>
 <tbody id="entrada"></tbody>
 </table>
 
-<button class="btn btn-green no-print" style="width:100%;margin-top:20px" onclick="gerar()">⚡ GERAR ENFESTOS</button>
+<button class="btn-main gerar" onclick="gerar()">⚡ GERAR ENFESTOS</button>
+<button class="btn-main imprimir" onclick="window.print()">🖨 IMPRIMIR</button>
 
-<select id="filtroPrint" class="no-print" style="margin-top:15px;width:100%">
-  <option value="all">Imprimir todas as opções</option>
-  <option value="op1">Somente Opção 1</option>
-  <option value="op2">Somente Opção 2</option>
-  <option value="op3">Somente Opção 3</option>
-</select>
-
-<button class="btn btn-blue no-print" style="width:100%;margin-top:10px" onclick="imprimir()">🖨️ IMPRIMIR</button>
-
-<!-- RESULTADOS -->
-<div id="resultado"></div>
+<div id="saida"></div>
 
 </div>
 
-<footer>
-  by Carlos Daniel / DANI
-</footer>
-
 <script>
-const entrada=document.getElementById("entrada");
-const res=document.getElementById("resultado");
-
-function addLinha(t="",q=0){
-  const tr=document.createElement("tr");
-  tr.innerHTML=`
-    <td><input value="${t}"></td>
-    <td><input type="number" value="${q}"></td>
-    <td><button onclick="this.parentNode.parentNode.remove()">X</button></td>`;
-  entrada.appendChild(tr);
+function addLinha(t='',q=''){
+entrada.innerHTML+=`
+<tr>
+<td><input value="${t}"></td>
+<td><input type="number" value="${q}"></td>
+<td><button onclick="this.parentElement.parentElement.remove()">X</button></td>
+</tr>`;
 }
 
-function gradeNumeros(){
-  entrada.innerHTML="";
-  [["38",20],["40",20],["42",20],["44",40],["46",30],["48",30],["50",30],["52",20],["54",20],["56",20],["58",20]]
-  .forEach(i=>addLinha(i[0],i[1]));
+function grade38(){
+entrada.innerHTML='';
+[['38',20],['40',20],['42',20],['44',40],['46',30],['48',30],['50',30],['52',20],['54',20],['56',20],['58',20]].forEach(x=>addLinha(x[0],x[1]));
 }
-
 function gradeLetras(){
-  entrada.innerHTML="";
-  [["P",60],["M",160],["G",160],["GG",110]]
-  .forEach(i=>addLinha(i[0],i[1]));
+entrada.innerHTML='';
+[['P',60],['M',160],['G',160],['GG',110]].forEach(x=>addLinha(x[0],x[1]));
 }
 
 function gerar(){
-  res.innerHTML="";
-  let dados=[...entrada.querySelectorAll("tr")].map(r=>({
-    t:r.children[0].firstChild.value,
-    q:+r.children[1].firstChild.value
-  })).filter(i=>i.q>0);
+saida.innerHTML='';
+let dados=[...entrada.querySelectorAll('tr')].map(r=>({
+t:r.children[0].children[0].value,
+q:+r.children[1].children[0].value
+})).filter(x=>x.q>0);
 
-  if(!dados.length)return;
+if(!dados.length)return;
 
-  criarOpcao("op1","Opção 1 – Plano Geral",dados);
-  criarOpcao("op2","Opção 2 – Agrupamento Otimizado",dados);
-  criarOpcao("op3","Opção 3 – Afinidade de Pares",dados);
+let L=+L.value,A=+A.value,M=+M.value;
+
+/* OPÇÃO 1 */
+saida.innerHTML+=`<div class="section"><div class="section-title">Opção 1 – Plano Geral</div></div>`;
+criarCard("ORDEM PADRÃO",dados,Math.min(...dados.map(x=>x.q)));
+
+/* OPÇÃO 2 – AGRUPAMENTO */
+saida.innerHTML+=`<div class="section"><div class="section-title">Opção 2 – Agrupamento Otimizado</div></div>`;
+dados.forEach(d=>criarCard(`ENFESTO ${d.t}`,[d],d.q));
+
+/* OPÇÃO 3 – PARES */
+saida.innerHTML+=`<div class="section"><div class="section-title">Opção 3 – Afinidade de Pares</div></div>`;
+let pares=[['M','G'],['GG','P']];
+pares.forEach(p=>{
+let a=dados.find(x=>x.t===p[0]);
+let b=dados.find(x=>x.t===p[1]);
+if(a&&b) criarCard(`OTIMIZADO ${a.t}+${b.t}`,[a,b],Math.min(a.q,b.q));
+});
 }
 
-function criarOpcao(id,titulo,dados){
-  let html=`<div class="titulo ${id}">${titulo}</div>`;
-  html+=criarCard("ENFESTO",dados);
-  res.innerHTML+=html;
-}
-
-function criarCard(nome,dados){
-  let fol=Math.min(...dados.map(d=>d.q));
-  let linhas="";
-  let risco=0;
-  dados.forEach(d=>{
-    let m=Math.round(d.q/fol)||1;
-    let prod=m*fol;
-    let saldo=prod-d.q;
-    risco+=m;
-    linhas+=`
-      <tr>
-        <td>${d.t}</td>
-        <td>${d.q}</td>
-        <td>${m}</td>
-        <td>${prod}</td>
-        <td class="${saldo>=0?'ok':'bad'}">${saldo>=0?'+':''}${saldo}</td>
-      </tr>`;
-  });
-  return `
-  <div class="card">
-    <div class="card-head">
-      <div>${nome}</div>
-      <div>FOLHAS: ${fol}</div>
-    </div>
-    <table>
-      <tr><th>TAM</th><th>PEDIDO</th><th>MOLDES</th><th>PROD.</th><th>SALDO</th></tr>
-      ${linhas}
-    </table>
-    <div style="margin-top:10px;font-weight:bold">
-      RISCO: ${risco.toFixed(2)}m
-    </div>
-  </div>`;
-}
-
-function imprimir(){
-  const f=document.getElementById("filtroPrint").value;
-  document.querySelectorAll(".op1,.op2,.op3").forEach(o=>{
-    o.style.display=(f==="all"||o.classList.contains(f))?"block":"none";
-  });
-  window.print();
-  document.querySelectorAll(".op1,.op2,.op3").forEach(o=>o.style.display="block");
+function criarCard(titulo,itens,folhas){
+let html=`<div class="card">
+<div class="card-header">${titulo} <span>FOLHAS <input value="${folhas}"></span></div>
+<table>
+<tr><th>TAM</th><th>PEDIDO</th><th>MOLDES</th><th>PROD</th><th>SALDO</th></tr>`;
+let moldes=0;
+itens.forEach(i=>{
+let m=Math.max(1,Math.round(i.q/folhas));
+let prod=m*folhas;
+let saldo=prod-i.q;
+moldes+=m;
+html+=`<tr>
+<td>${i.t}</td><td>${i.q}</td><td>${m}</td><td>${prod}</td>
+<td class="${saldo>=0?'ok':'bad'}">${saldo>=0?'+':''}${saldo}</td>
+</tr>`;
+});
+let risco=(moldes*A/L).toFixed(2);
+html+=`</table>
+<div>RISCO: ${risco}m | MESA: ${risco<=M?'✔ OK':'⚠ PASSA'}</div></div>`;
+saida.innerHTML+=html;
 }
 
 gradeLetras();
 </script>
-
 </body>
 </html>
