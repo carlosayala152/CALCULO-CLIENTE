@@ -1,285 +1,162 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>ADMIN — SISTEMA DE CORTE PRO</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>ADMIN – SISTEMA DE CORTE PRO</title>
 <style>
-body{
-  margin:0;
-  font-family:Segoe UI,Arial,sans-serif;
-  background:#0f172a;
-  color:#e5e7eb;
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
 }
-header{
-  background:#020617;
-  padding:18px;
-  text-align:center;
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
 }
-header h1{margin:0;font-size:22px}
-header small{color:#94a3b8}
-
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:20px;
+h2 {
+  margin-bottom: 20px;
 }
-.card{
-  background:#020617;
-  padding:20px;
-  border-radius:14px;
-  margin-bottom:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,.5);
+label {
+  font-weight: bold;
 }
-input,select,button{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:8px;
-  border:none;
+input, select {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
 }
-button{
-  background:#10b981;
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
+button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
-button.red{background:#dc2626}
-button.gray{background:#64748b}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:15px;
+.btn-save {
+  background: #28a745;
+  color: #fff;
 }
-th,td{
-  border:1px solid #1e293b;
-  padding:8px;
-  text-align:center;
+.btn-new {
+  background: #007bff;
+  color: #fff;
 }
-th{background:#0f172a}
-
-.badge-on{color:#22c55e;font-weight:bold}
-.badge-off{color:#ef4444;font-weight:bold}
-.actions button{margin:2px;font-size:12px}
-
-.hidden{display:none}
-.msg{color:#f87171;margin-top:10px}
-.top-actions{
-  display:flex; gap:10px; flex-wrap:wrap;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
-.search{
-  flex:1;
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
-.footer{
-  text-align:center;
-  color:#94a3b8;
-  font-size:12px;
-  margin:20px 0;
+th {
+  background: #111827;
+  color: #fff;
 }
 </style>
 </head>
-
 <body>
 
-<header>
-  <h1>SISTEMA DE CORTE PRO</h1>
-  <small>Admin · by Carlos Daniel / DANI</small>
-</header>
-
 <div class="container">
+<h2>Cadastro / Edição de Licença</h2>
 
-  <!-- LOGIN -->
-  <div class="card" id="loginBox">
-    <h3>Login Admin</h3>
-    <input type="password" id="adminPass" placeholder="Senha admin">
-    <button onclick="login()">Entrar</button>
-    <div class="msg" id="loginMsg"></div>
-  </div>
+<label>Status</label>
+<select id="STATUS">
+  <option>ON</option>
+  <option>OFF</option>
+</select>
 
-  <!-- PAINEL -->
-  <div class="hidden" id="panel">
+<label>Etiquetas</label>
+<select id="ETIQUETAS">
+  <option>ON</option>
+  <option>OFF</option>
+</select>
 
-    <!-- FORM -->
-    <div class="card">
-      <h3 id="formTitle">Criar Cliente</h3>
+<label>Senha</label>
+<input id="SENHA">
 
-      <select id="status">
-        <option value="ON">ON</option>
-        <option value="OFF">OFF</option>
-      </select>
+<label>Validade</label>
+<input id="VALIDADE" type="date">
 
-      <input id="senha" placeholder="Senha do cliente">
-      <input id="validade" type="date">
-      <input id="cliente" placeholder="Nome do cliente">
+<label>Cliente</label>
+<input id="CLIENTE">
 
-      <select id="plano">
-        <option>MENSAL</option>
-        <option>TRIMESTRAL</option>
-        <option>ANUAL</option>
-      </select>
+<label>Plano</label>
+<select id="PLANO">
+  <option>ANUAL</option>
+  <option>MENSAL</option>
+</select>
 
-      <input type="hidden" id="linha">
+<button class="btn-save" onclick="salvar()">💾 SALVAR</button>
+<button class="btn-new" onclick="limpar()">➕ NOVO</button>
 
-      <div class="top-actions">
-        <button onclick="salvar()">Salvar</button>
-        <button class="gray" onclick="limpar()">Cancelar</button>
-      </div>
-
-      <div class="msg" id="formMsg"></div>
-    </div>
-
-    <!-- LISTA -->
-    <div class="card">
-      <h3>Clientes</h3>
-
-      <input class="search" id="busca" placeholder="Buscar cliente..." oninput="filtrar()">
-
-      <table>
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Cliente</th>
-            <th>Senha</th>
-            <th>Validade</th>
-            <th>Plano</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="lista">
-          <tr><td colspan="6">Carregando...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-</div>
-
-<div class="footer">
-  by Carlos Daniel / DANI
+<h2>Licenças Cadastradas</h2>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>Etiquetas</th>
+<th>Senha</th>
+<th>Validade</th>
+<th>Cliente</th>
+<th>Plano</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
 </div>
 
 <script>
-// ================= CONFIG =================
-const ADMIN_PASS = "Amor2403";
-const API = "https://script.google.com/macros/s/AKfycbzP1WYuEkNrGOpwtLQy8mdG9kcVO1Ue9WWjpITwBnp-suCrFZ2VpGwBmUQRXIu-Pcaa8Q/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyc80QuLnPdSCdDEM9OoVhCailFEKR4FhFewP7O4cu9NfcJr50Ce663KqMwHIc4OmJD/exec";
 
-// ================= LOGIN =================
-function login(){
-  if(adminPass.value !== ADMIN_PASS){
-    loginMsg.innerText = "Senha incorreta";
-    return;
-  }
-  loginBox.classList.add("hidden");
-  panel.classList.remove("hidden");
-  carregar();
+function carregar() {
+  fetch(API_URL)
+    .then(r => r.json())
+    .then(d => {
+      const tb = document.getElementById("lista");
+      tb.innerHTML = "";
+      d.forEach(l => {
+        tb.innerHTML += `
+          <tr>
+            <td>${l.STATUS}</td>
+            <td>${l.ETIQUETAS}</td>
+            <td>${l.SENHA}</td>
+            <td>${l.VALIDADE}</td>
+            <td>${l.CLIENTE}</td>
+            <td>${l.PLANO}</td>
+          </tr>`;
+      });
+    });
 }
 
-// ================= API =================
-async function chamar(params){
-  const url = API + "?" + new URLSearchParams(params).toString();
-  const r = await fetch(url);
-  return r.json();
-}
-
-// ================= LOAD =================
-let cache = [];
-
-async function carregar(){
-  const dados = await chamar({acao:"listar"});
-  cache = dados;
-  render(dados);
-}
-
-function render(dados){
-  const tbody = document.getElementById("lista");
-  tbody.innerHTML = "";
-
-  if(!Array.isArray(dados) || dados.length===0){
-    tbody.innerHTML = "<tr><td colspan='6'>Nenhum cliente</td></tr>";
-    return;
-  }
-
-  dados.forEach((c,i)=>{
-    tbody.innerHTML += `
-      <tr>
-        <td class="${c.status==="ON"?"badge-on":"badge-off"}">${c.status}</td>
-        <td>${c.cliente}</td>
-        <td>${c.senha}</td>
-        <td>${c.validade}</td>
-        <td>${c.plano}</td>
-        <td class="actions">
-          <button onclick="editar(${i})">Editar</button>
-          <button class="red" onclick="toggle(${i})">ON/OFF</button>
-        </td>
-      </tr>`;
-  });
-}
-
-// ================= CRUD =================
-async function salvar(){
-  if(!senha.value || !validade.value || !cliente.value){
-    formMsg.innerText = "Preencha todos os campos";
-    return;
-  }
-
-  const p = {
-    acao: linha.value ? "editar" : "criar",
-    linha: linha.value,
-    status: status.value,
-    senha: senha.value,
-    validade: validade.value,
-    cliente: cliente.value,
-    plano: plano.value
+function salvar() {
+  const data = {
+    STATUS: STATUS.value,
+    ETIQUETAS: ETIQUETAS.value,
+    SENHA: SENHA.value,
+    VALIDADE: VALIDADE.value,
+    CLIENTE: CLIENTE.value,
+    PLANO: PLANO.value
   };
 
-  await chamar(p);
-  limpar();
-  carregar();
-}
-
-function editar(i){
-  const c = cache[i];
-  status.value = c.status;
-  senha.value = c.senha;
-  validade.value = c.validade;
-  cliente.value = c.cliente;
-  plano.value = c.plano;
-  linha.value = c.linha;
-  formTitle.innerText = "Editar Cliente";
-}
-
-async function toggle(i){
-  const c = cache[i];
-  await chamar({
-    acao:"editar",
-    linha:c.linha,
-    status: c.status==="ON"?"OFF":"ON",
-    senha:c.senha,
-    validade:c.validade,
-    cliente:c.cliente,
-    plano:c.plano
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    limpar();
+    carregar();
   });
-  carregar();
 }
 
-function limpar(){
-  status.value="ON";
-  senha.value="";
-  validade.value="";
-  cliente.value="";
-  plano.value="MENSAL";
-  linha.value="";
-  formTitle.innerText="Criar Cliente";
-  formMsg.innerText="";
+function limpar() {
+  SENHA.value = "";
+  VALIDADE.value = "";
+  CLIENTE.value = "";
 }
 
-// ================= BUSCA =================
-function filtrar(){
-  const q = busca.value.toLowerCase();
-  render(cache.filter(c=>c.cliente.toLowerCase().includes(q)));
-}
+carregar();
 </script>
 
 </body>
