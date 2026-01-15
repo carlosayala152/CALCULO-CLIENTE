@@ -2,161 +2,151 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>ADMIN – SISTEMA DE CORTE PRO</title>
+<title>ADMIN — SISTEMA DE CORTE PRO</title>
+
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
+body{
+  background:#0b1220;
+  font-family:Arial;
+  color:#fff;
 }
-.container {
-  max-width: 900px;
-  margin: 40px auto;
-  background: #fff;
-  padding: 25px;
-  border-radius: 10px;
+.container{
+  max-width:900px;
+  margin:40px auto;
 }
-h2 {
-  margin-bottom: 20px;
+.card{
+  background:#0f172a;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
 }
-label {
-  font-weight: bold;
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:6px;
+  border:none;
 }
-input, select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
+button{
+  background:#10b981;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
 }
-button {
-  padding: 10px 18px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+table{
+  width:100%;
+  border-collapse:collapse;
 }
-.btn-save {
-  background: #28a745;
-  color: #fff;
+th,td{
+  padding:8px;
+  border-bottom:1px solid #1e293b;
 }
-.btn-new {
-  background: #007bff;
-  color: #fff;
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-}
-th {
-  background: #111827;
-  color: #fff;
-}
+.hidden{display:none}
 </style>
 </head>
+
 <body>
 
 <div class="container">
-<h2>Cadastro / Edição de Licença</h2>
 
-<label>Status</label>
-<select id="STATUS">
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2>Login Admin</h2>
+  <input type="password" id="adminPass" placeholder="Senha admin">
+  <button onclick="login()">Entrar</button>
+</div>
+
+<!-- PAINEL -->
+<div class="card hidden" id="panel">
+
+<h2>SISTEMA DE CORTE PRO</h2>
+
+<h3>Criar Cliente</h3>
+
+<select id="status">
   <option>ON</option>
   <option>OFF</option>
 </select>
 
-<label>Etiquetas</label>
-<select id="ETIQUETAS">
-  <option>ON</option>
-  <option>OFF</option>
-</select>
+<input id="senha" placeholder="Senha">
+<input id="validade" type="date">
+<input id="cliente" placeholder="Cliente">
 
-<label>Senha</label>
-<input id="SENHA">
-
-<label>Validade</label>
-<input id="VALIDADE" type="date">
-
-<label>Cliente</label>
-<input id="CLIENTE">
-
-<label>Plano</label>
-<select id="PLANO">
-  <option>ANUAL</option>
+<select id="plano">
   <option>MENSAL</option>
+  <option>ANUAL</option>
 </select>
 
-<button class="btn-save" onclick="salvar()">💾 SALVAR</button>
-<button class="btn-new" onclick="limpar()">➕ NOVO</button>
+<select id="etiquetas">
+  <option>ON</option>
+  <option>OFF</option>
+</select>
 
-<h2>Licenças Cadastradas</h2>
+<button onclick="salvar()">Salvar</button>
+
+<h3>Clientes</h3>
+
 <table>
 <thead>
 <tr>
 <th>Status</th>
-<th>Etiquetas</th>
+<th>Cliente</th>
 <th>Senha</th>
 <th>Validade</th>
-<th>Cliente</th>
 <th>Plano</th>
+<th>Etiquetas</th>
 </tr>
 </thead>
 <tbody id="lista"></tbody>
 </table>
+
+</div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyc80QuLnPdSCdDEM9OoVhCailFEKR4FhFewP7O4cu9NfcJr50Ce663KqMwHIc4OmJD/exec";
+const URL = location.href;
 
-function carregar() {
-  fetch(API_URL)
-    .then(r => r.json())
-    .then(d => {
-      const tb = document.getElementById("lista");
-      tb.innerHTML = "";
-      d.forEach(l => {
-        tb.innerHTML += `
+function login(){
+  if(adminPass.value !== "Amor2403"){
+    alert("Senha incorreta");
+    return;
+  }
+  loginBox.classList.add("hidden");
+  panel.classList.remove("hidden");
+  carregar();
+}
+
+function carregar(){
+  fetch(URL+"?acao=listar")
+    .then(r=>r.json())
+    .then(d=>{
+      lista.innerHTML="";
+      d.forEach(c=>{
+        lista.innerHTML+=`
           <tr>
-            <td>${l.STATUS}</td>
-            <td>${l.ETIQUETAS}</td>
-            <td>${l.SENHA}</td>
-            <td>${l.VALIDADE}</td>
-            <td>${l.CLIENTE}</td>
-            <td>${l.PLANO}</td>
+            <td>${c.status}</td>
+            <td>${c.cliente}</td>
+            <td>${c.senha}</td>
+            <td>${c.validade}</td>
+            <td>${c.plano}</td>
+            <td>${c.etiquetas}</td>
           </tr>`;
       });
     });
 }
 
-function salvar() {
-  const data = {
-    STATUS: STATUS.value,
-    ETIQUETAS: ETIQUETAS.value,
-    SENHA: SENHA.value,
-    VALIDADE: VALIDADE.value,
-    CLIENTE: CLIENTE.value,
-    PLANO: PLANO.value
-  };
-
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  }).then(() => {
-    limpar();
-    carregar();
+function salvar(){
+  const p = new URLSearchParams({
+    acao:"criar",
+    status:status.value,
+    senha:senha.value,
+    validade:validade.value,
+    cliente:cliente.value,
+    plano:plano.value,
+    etiquetas:etiquetas.value
   });
+  fetch(URL+"?"+p).then(()=>carregar());
 }
-
-function limpar() {
-  SENHA.value = "";
-  VALIDADE.value = "";
-  CLIENTE.value = "";
-}
-
-carregar();
 </script>
 
 </body>
