@@ -1,67 +1,52 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>ADMIN — SISTEMA DE CORTE PRO</title>
+<title>ADMIN – SISTEMA DE CORTE PRO</title>
 
 <style>
-body{
+body {
   background:#0b1220;
-  font-family:Arial;
   color:#fff;
+  font-family:Arial;
 }
-.container{
-  max-width:900px;
-  margin:40px auto;
+.container {
+  max-width:800px;
+  margin:auto;
 }
-.card{
-  background:#0f172a;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:20px;
-}
-input,select,button{
+input, select, button {
   width:100%;
   padding:10px;
-  margin:6px 0;
-  border-radius:6px;
-  border:none;
+  margin:5px 0;
 }
-button{
+button {
   background:#10b981;
-  color:#000;
-  font-weight:bold;
+  border:none;
+  color:#fff;
   cursor:pointer;
 }
-table{
+table {
   width:100%;
+  margin-top:20px;
   border-collapse:collapse;
 }
-th,td{
+th, td {
+  border-bottom:1px solid #333;
   padding:8px;
-  border-bottom:1px solid #1e293b;
 }
-.hidden{display:none}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h2>Login Admin</h2>
-  <input type="password" id="adminPass" placeholder="Senha admin">
-  <button onclick="login()">Entrar</button>
-</div>
+<h2>Login Admin</h2>
+<input type="password" id="senhaAdmin" placeholder="Senha admin">
+<button onclick="login()">Entrar</button>
 
-<!-- PAINEL -->
-<div class="card hidden" id="panel">
+<div id="admin" style="display:none">
 
-<h2>SISTEMA DE CORTE PRO</h2>
-
-<h3>Criar Cliente</h3>
+<h2>Criar Cliente</h2>
 
 <select id="status">
   <option>ON</option>
@@ -84,17 +69,12 @@ th,td{
 
 <button onclick="salvar()">Salvar</button>
 
-<h3>Clientes</h3>
-
+<h2>Clientes</h2>
 <table>
 <thead>
 <tr>
-<th>Status</th>
-<th>Cliente</th>
-<th>Senha</th>
-<th>Validade</th>
-<th>Plano</th>
-<th>Etiquetas</th>
+<th>Status</th><th>Cliente</th><th>Senha</th>
+<th>Validade</th><th>Plano</th><th>Etiquetas</th>
 </tr>
 </thead>
 <tbody id="lista"></tbody>
@@ -104,25 +84,41 @@ th,td{
 </div>
 
 <script>
-const URL = location.href;
+const API = "https://script.google.com/macros/s/AKfycbyCrbOwGig1DjFrT0eFNzXzdoHbMR1T93woPby2rxyJgNozhitOcsWY6PTFxQzgFkXxLA/exec";
+const SENHA_ADMIN = "1234"; // troque depois
 
-function login(){
-  if(adminPass.value !== "Amor2403"){
+function login() {
+  if (document.getElementById("senhaAdmin").value === SENHA_ADMIN) {
+    document.getElementById("admin").style.display = "block";
+    listar();
+  } else {
     alert("Senha incorreta");
-    return;
   }
-  loginBox.classList.add("hidden");
-  panel.classList.remove("hidden");
-  carregar();
 }
 
-function carregar(){
-  fetch(URL+"?acao=listar")
+function salvar() {
+  fetch(API + "?action=salvar", {
+    method:"POST",
+    body: JSON.stringify({
+      status: status.value,
+      senha: senha.value,
+      validade: validade.value,
+      cliente: cliente.value,
+      plano: plano.value,
+      etiquetas: etiquetas.value
+    })
+  })
+  .then(r=>r.json())
+  .then(()=>listar());
+}
+
+function listar() {
+  fetch(API + "?action=listar")
     .then(r=>r.json())
     .then(d=>{
       lista.innerHTML="";
       d.forEach(c=>{
-        lista.innerHTML+=`
+        lista.innerHTML += `
           <tr>
             <td>${c.status}</td>
             <td>${c.cliente}</td>
@@ -133,19 +129,6 @@ function carregar(){
           </tr>`;
       });
     });
-}
-
-function salvar(){
-  const p = new URLSearchParams({
-    acao:"criar",
-    status:status.value,
-    senha:senha.value,
-    validade:validade.value,
-    cliente:cliente.value,
-    plano:plano.value,
-    etiquetas:etiquetas.value
-  });
-  fetch(URL+"?"+p).then(()=>carregar());
 }
 </script>
 
