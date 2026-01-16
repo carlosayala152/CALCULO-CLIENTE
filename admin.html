@@ -3,37 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>ADMIN – SISTEMA DE CORTE PRO</title>
-
 <style>
-body {
-  background:#0b1220;
-  color:#fff;
-  font-family:Arial;
-}
-.container {
-  max-width:800px;
-  margin:auto;
-}
-input, select, button {
-  width:100%;
-  padding:10px;
-  margin:5px 0;
-}
-button {
-  background:#10b981;
-  border:none;
-  color:#fff;
-  cursor:pointer;
-}
-table {
-  width:100%;
-  margin-top:20px;
-  border-collapse:collapse;
-}
-th, td {
-  border-bottom:1px solid #333;
-  padding:8px;
-}
+body{background:#0b1324;color:#fff;font-family:Arial}
+.container{max-width:800px;margin:40px auto}
+input,select,button{width:100%;padding:10px;margin:6px 0}
+button{background:#18c77a;border:0;color:#000;font-weight:bold}
+table{width:100%;margin-top:20px;border-collapse:collapse}
+td,th{border:1px solid #333;padding:6px}
+.hidden{display:none}
 </style>
 </head>
 
@@ -41,40 +18,25 @@ th, td {
 <div class="container">
 
 <h2>Login Admin</h2>
-<input type="password" id="senhaAdmin" placeholder="Senha admin">
+<input type="password" id="senhaAdmin" placeholder="Senha do admin">
 <button onclick="login()">Entrar</button>
 
-<div id="admin" style="display:none">
+<div id="admin" class="hidden">
 
 <h2>Criar Cliente</h2>
-
-<select id="status">
-  <option>ON</option>
-  <option>OFF</option>
-</select>
-
-<input id="senha" placeholder="Senha">
+<select id="status"><option>ON</option><option>OFF</option></select>
+<input id="senha" placeholder="Senha cliente">
 <input id="validade" type="date">
 <input id="cliente" placeholder="Cliente">
-
-<select id="plano">
-  <option>MENSAL</option>
-  <option>ANUAL</option>
-</select>
-
-<select id="etiquetas">
-  <option>ON</option>
-  <option>OFF</option>
-</select>
-
+<select id="plano"><option>MENSAL</option><option>ANUAL</option></select>
+<select id="etiquetas"><option>ON</option><option>OFF</option></select>
 <button onclick="salvar()">Salvar</button>
 
 <h2>Clientes</h2>
 <table>
 <thead>
 <tr>
-<th>Status</th><th>Cliente</th><th>Senha</th>
-<th>Validade</th><th>Plano</th><th>Etiquetas</th>
+<th>Status</th><th>Cliente</th><th>Senha</th><th>Validade</th><th>Plano</th><th>Etiquetas</th>
 </tr>
 </thead>
 <tbody id="lista"></tbody>
@@ -84,53 +46,53 @@ th, td {
 </div>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyCrbOwGig1DjFrT0eFNzXzdoHbMR1T93woPby2rxyJgNozhitOcsWY6PTFxQzgFkXxLA/exec";
-const SENHA_ADMIN = "1234"; // troque depois
+const API_URL = "https://script.google.com/macros/s/AKfycbw3nwrqhHtVDeErtpUZGN-0L0RGYwW2krSjHT7EYpObkH5vquHUHVOIaTE1QXEcD3Pg8A/exec";
 
-function login() {
-  if (document.getElementById("senhaAdmin").value === SENHA_ADMIN) {
-    document.getElementById("admin").style.display = "block";
-    listar();
-  } else {
-    alert("Senha incorreta");
-  }
-}
-
-function salvar() {
-  fetch(API + "?action=salvar", {
-    method:"POST",
-    body: JSON.stringify({
-      status: status.value,
-      senha: senha.value,
-      validade: validade.value,
-      cliente: cliente.value,
-      plano: plano.value,
-      etiquetas: etiquetas.value
-    })
-  })
+function login(){
+  fetch(`${API_URL}?acao=login&senha=`+senhaAdmin.value)
   .then(r=>r.json())
-  .then(()=>listar());
+  .then(d=>{
+    if(d.ok){
+      document.getElementById("admin").classList.remove("hidden");
+    }else{
+      alert("Senha incorreta");
+    }
+  });
 }
 
-function listar() {
-  fetch(API + "?action=listar")
-    .then(r=>r.json())
-    .then(d=>{
-      lista.innerHTML="";
-      d.forEach(c=>{
-        lista.innerHTML += `
-          <tr>
-            <td>${c.status}</td>
-            <td>${c.cliente}</td>
-            <td>${c.senha}</td>
-            <td>${c.validade}</td>
-            <td>${c.plano}</td>
-            <td>${c.etiquetas}</td>
-          </tr>`;
-      });
+function salvar(){
+  const p = new URLSearchParams({
+    acao:"salvar",
+    status:status.value,
+    senha:senha.value,
+    validade:validade.value,
+    cliente:cliente.value,
+    plano:plano.value,
+    etiquetas:etiquetas.value
+  });
+
+  fetch(API_URL+"?"+p).then(()=>listar());
+}
+
+function listar(){
+  fetch(API_URL+"?acao=listar")
+  .then(r=>r.json())
+  .then(d=>{
+    lista.innerHTML="";
+    d.forEach(c=>{
+      lista.innerHTML+=`
+      <tr>
+        <td>${c.status}</td>
+        <td>${c.cliente}</td>
+        <td>${c.senha}</td>
+        <td>${c.validade}</td>
+        <td>${c.plano}</td>
+        <td>${c.etiquetas}</td>
+      </tr>`;
     });
+  });
 }
-</script>
 
+</script>
 </body>
 </html>
