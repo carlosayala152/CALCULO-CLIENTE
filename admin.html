@@ -2,14 +2,49 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>ADMIN – SISTEMA DE CORTE PRO</title>
+<title>ADMIN — SISTEMA DE CORTE PRO</title>
 <style>
-body{background:#0b1324;color:#fff;font-family:Arial}
-.container{max-width:800px;margin:40px auto}
-input,select,button{width:100%;padding:10px;margin:6px 0}
-button{background:#18c77a;border:0;color:#000;font-weight:bold}
-table{width:100%;margin-top:20px;border-collapse:collapse}
-td,th{border:1px solid #333;padding:6px}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0b1220;
+  color:#fff;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:30px;
+}
+.box{
+  background:#0f1a2e;
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:25px;
+}
+h2{margin-top:0}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin:6px 0;
+  border-radius:6px;
+  border:none;
+  font-size:15px;
+}
+button{
+  background:#10b981;
+  color:#fff;
+  cursor:pointer;
+}
+button:hover{opacity:.9}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:8px;
+  border-bottom:1px solid #1f2a44;
+  text-align:left;
+}
 .hidden{display:none}
 </style>
 </head>
@@ -17,82 +52,128 @@ td,th{border:1px solid #333;padding:6px}
 <body>
 <div class="container">
 
-<h2>Login Admin</h2>
-<input type="password" id="senhaAdmin" placeholder="Senha do admin">
-<button onclick="login()">Entrar</button>
+  <!-- LOGIN -->
+  <div class="box" id="loginBox">
+    <h2>Login Admin</h2>
+    <input type="password" id="senhaAdmin" placeholder="Senha do Admin">
+    <button onclick="login()">Entrar</button>
+  </div>
 
-<div id="admin" class="hidden">
+  <!-- ADMIN -->
+  <div class="box hidden" id="adminBox">
 
-<h2>Criar Cliente</h2>
-<select id="status"><option>ON</option><option>OFF</option></select>
-<input id="senha" placeholder="Senha cliente">
-<input id="validade" type="date">
-<input id="cliente" placeholder="Cliente">
-<select id="plano"><option>MENSAL</option><option>ANUAL</option></select>
-<select id="etiquetas"><option>ON</option><option>OFF</option></select>
-<button onclick="salvar()">Salvar</button>
+    <h2>Criar Cliente</h2>
 
-<h2>Clientes</h2>
-<table>
-<thead>
-<tr>
-<th>Status</th><th>Cliente</th><th>Senha</th><th>Validade</th><th>Plano</th><th>Etiquetas</th>
-</tr>
-</thead>
-<tbody id="lista"></tbody>
-</table>
+    <select id="status">
+      <option value="ON">ON</option>
+      <option value="OFF">OFF</option>
+    </select>
 
-</div>
+    <input id="senha" placeholder="Senha do Cliente">
+
+    <input id="validade" type="date">
+
+    <input id="cliente" placeholder="Nome do Cliente">
+
+    <select id="plano">
+      <option value="MENSAL">MENSAL</option>
+      <option value="ANUAL">ANUAL</option>
+    </select>
+
+    <select id="etiquetas">
+      <option value="ON">Etiquetas ON</option>
+      <option value="OFF">Etiquetas OFF</option>
+    </select>
+
+    <button onclick="salvar()">Salvar Cliente</button>
+  </div>
+
+  <!-- LISTA -->
+  <div class="box hidden" id="listaBox">
+    <h2>Clientes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Cliente</th>
+          <th>Senha</th>
+          <th>Validade</th>
+          <th>Plano</th>
+          <th>Etiquetas</th>
+        </tr>
+      </thead>
+      <tbody id="lista"></tbody>
+    </table>
+  </div>
+
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbw3nwrqhHtVDeErtpUZGN-0L0RGYwW2krSjHT7EYpObkH5vquHUHVOIaTE1QXEcD3Pg8A/exec";
+const API = "https://script.google.com/macros/s/AKfycbxoYz7e2vMDYG6z9in9xVbUAs9ks-pZ1GG4F4fgEmE0H491HkXJqyVBNcqYjHQhL8m4yw/exec";
+let ACAO = "";
 
-function login(){
-  fetch(`${API_URL}?acao=login&senha=`+senhaAdmin.value)
-  .then(r=>r.json())
-  .then(d=>{
+function jsonp(url, cb){
+  const s = document.createElement("script");
+  window[cb] = data=>{
+    delete window[cb];
+    s.remove();
+    handle(data);
+  };
+  s.src = url + "&callback=" + cb;
+  document.body.appendChild(s);
+}
+
+function handle(d){
+  if(ACAO==="login"){
     if(d.ok){
-      document.getElementById("admin").classList.remove("hidden");
-    }else{
-      alert("Senha incorreta");
-    }
-  });
-}
+      loginBox.classList.add("hidden");
+      adminBox.classList.remove("hidden");
+      listaBox.classList.remove("hidden");
+      listar();
+    } else alert("Senha incorreta");
+  }
 
-function salvar(){
-  const p = new URLSearchParams({
-    acao:"salvar",
-    status:status.value,
-    senha:senha.value,
-    validade:validade.value,
-    cliente:cliente.value,
-    plano:plano.value,
-    etiquetas:etiquetas.value
-  });
-
-  fetch(API_URL+"?"+p).then(()=>listar());
-}
-
-function listar(){
-  fetch(API_URL+"?acao=listar")
-  .then(r=>r.json())
-  .then(d=>{
+  if(ACAO==="listar"){
     lista.innerHTML="";
     d.forEach(c=>{
       lista.innerHTML+=`
-      <tr>
-        <td>${c.status}</td>
-        <td>${c.cliente}</td>
-        <td>${c.senha}</td>
-        <td>${c.validade}</td>
-        <td>${c.plano}</td>
-        <td>${c.etiquetas}</td>
-      </tr>`;
+        <tr>
+          <td>${c.status}</td>
+          <td>${c.cliente}</td>
+          <td>${c.senha}</td>
+          <td>${c.validade}</td>
+          <td>${c.plano}</td>
+          <td>${c.etiquetas}</td>
+        </tr>`;
     });
-  });
+  }
+
+  if(ACAO==="salvar"){
+    alert("Cliente salvo com sucesso");
+    listar();
+  }
 }
 
+function login(){
+  ACAO="login";
+  jsonp(`${API}?acao=login&senha=${senhaAdmin.value}`,"cbLogin");
+}
+
+function listar(){
+  ACAO="listar";
+  jsonp(`${API}?acao=listar`,"cbListar");
+}
+
+function salvar(){
+  ACAO="salvar";
+  jsonp(`${API}?acao=salvar
+    &status=${status.value}
+    &senha=${senha.value}
+    &validade=${validade.value}
+    &cliente=${cliente.value}
+    &plano=${plano.value}
+    &etiquetas=${etiquetas.value}`,"cbSalvar");
+}
 </script>
 </body>
 </html>
